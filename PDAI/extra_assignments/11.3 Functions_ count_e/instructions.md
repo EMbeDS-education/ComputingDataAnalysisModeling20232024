@@ -1,0 +1,1 @@
+Write a function called "count_e" that takes in one string argument.  It should return the number of "e"s (uppercase or lowercase)
