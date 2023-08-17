@@ -1,0 +1,32 @@
+\frametitle{{Variables}}
+	\framesubtitle{Basic abstraction to represent units of data}
+	A variable has a name and a value
+	\begin{itemize}
+		\item Names can contain any letter, number, or the underscore \_
+		\\
+		%\begin{minipage}{0.4\textwidth}
+		%\includegraphics[width=1.0\textwidth]{figures/keywords2}
+		%\end{minipage}
+		\begin{minipage}{0.50\textwidth}
+			\includegraphics[width=1.0\textwidth]{figures/keywords}
+		\end{minipage}
+		\begin{minipage}{0.42\textwidth}
+			Note:
+			\begin{itemize}
+				\item Cannot start with numbers
+				\item Cannot be a  keyword
+				\item Names are case-sensitive
+			\end{itemize}
+		\end{minipage}
+		
+		\item We assign/update values to variables using assignment statements
+		%\begin{lstlisting}[language=python,basicstyle=\footnotesize\ttfamily,    stringstyle=\ttfamily\color{green}]
+		
+\begin{lstlisting}[language=python]
+month_number=3
+month_name="April"
+print("The number of",month_name,"is",month_number)
+month_number=4
+print("The number of",month_name,"is",month_number)
+\end{lstlisting}
+\end{itemize}

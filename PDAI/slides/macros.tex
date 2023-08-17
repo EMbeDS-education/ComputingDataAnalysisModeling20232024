@@ -1,0 +1,495 @@
+%\pdfoutput = 1
+%\usepackage[english,danish]{babel}
+%\usepackage[applemac]{inputenc}
+%\usepackage{qtree}
+\usepackage{hyperref}
+\usepackage{mibmrcfg}
+\usepackage{amscd}
+%\usepackage{proof}
+\usepackage{multirow}
+\usepackage{tabularx}
+%\usepackage{ifpdf}
+
+
+\newcommand{\miqed}{\qed}
+
+\usepackage[normalem]{ulem}
+
+\usepackage{ifpdf}
+\usepackage{ifthen}
+
+\ifpdf
+  \newcommand{\inputfig}[1]{
+    %\includegraphics[angle=-90]{#1.pdftex}
+    \input{#1.pdftex_t}
+  }
+%  \DeclareGraphicsRule{.pdftex}{pdf}{.pdftex}{}
+\else
+  \newcommand{\inputfig}[1]{\input{#1.pstex_t}}
+\fi
+
+\newcommand{\tsigma}{\mathcal{T}_{\Sigma}} 
+\newcommand{\tsigmav}{\tsigma(\Var)}
+
+\newcommand{\crypt}[2]{\{#2\}_{#1}}
+\newcommand{\scrypt}[2]{\{\!| #2 |\!\}_{#1}}
+\newcommand{\inv}[1]{\iffont{inv}(#1)}
+\newcommand{\pair}[2]{\langle #1, #2 \rangle}
+%\newcommand{\fst}[1]{\pi_1(#1)}
+%\newcommand{\snd}[1]{\pi_2(#1)}
+\newcommand{\tuple}[1]{\langle #1 \rangle}
+
+\newcommand{\idfont}[1]{\mathit{#1}}
+\newcommand{\HN}{\idfont{HN}}
+\newcommand{\NA}{\idfont{NA}}
+\newcommand{\NB}{\idfont{NB}}
+\newcommand{\na}{\idfont{na}}
+\newcommand{\nb}{\idfont{nb}}
+\newcommand{\GX}{\idfont{GX}}
+\newcommand{\GY}{\idfont{GY}}
+
+\newcommand{\pkNA}{\iffont{pk}}
+\newcommand{\skNA}{\iffont{sk}}
+\newcommand{\pk}[1]{\pkNA(#1)}
+\newcommand{\sk}[1]{\skNA(#1)}
+
+\newcommand{\dyS}{\mathcal{DY}}
+\newcommand{\dy}[1]{\dyS(#1)}
+\newcommand{\dym}[2]{\dyS_{#1}(#2)}
+\newcommand{\dymS}[1]{\dyS_{#1}}
+\newcommand{\public}{\Sigma_p}
+%{\mathit{public}}
+
+\newcommand{\state}[2]{\stateNA_{#1}(#2)}
+\newcommand{\stateNA}{\iffont{state}}
+\newcommand{\iknows}[1]{\iknowsNA(#1)}
+\newcommand{\iknowsNA}{\iffont{iknows}}
+%\newcommand{\knows}[2]{\iffont{knows}(#1,#2)}
+\newcommand{\ifnot}[1]{\iffont{not}(#1)}
+\newcommand{\ifdot}{{}_{\;\bullet\;}}
+
+\newcommand{\ifarrow}[1][]{
+  \ifthenelse{\equal{#1}{}}{
+    \Rightarrow
+  }{
+    =\!\!\![{#1}]\!\!\!\hspace{1pt}\Rightarrow
+  }}
+
+\newcommand{\iffont}[1]{\mathsf{#1}}
+
+\newcommand{\roleA}{\mathcal{A}}
+\newcommand{\roleB}{\mathcal{B}}
+\newcommand{\roleR}{\mathcal{R}}
+
+%\newcommand{\drightarrow}{\rightarrow\!\!\!\!\!\rightarrow}
+
+\newcommand{\secCh}{\mbox{$\,\bullet\!\!\rightarrow\!\!\bullet\,$}}
+\newcommand{\athCh}{\mbox{$\,\bullet\!\!\rightarrow$\,}}
+\newcommand{\cnfCh}{\mbox{${\rightarrow\!\!\bullet\,}$}}
+% \newcommand{\secChRP}{\,\bullet\!\!\!\drightarrow\!\!\bullet\,}
+% \newcommand{\athChRP}{\,\bullet\!\!\!\drightarrow}
+% \newcommand{\cnfChRP}{\drightarrow\!\!\bullet\,}
+\newcommand{\secRCh}{\,\bullet\!\!\!\twoheadrightarrow\!\!\bullet\,}
+\newcommand{\athRCh}{\,\bullet\!\!\!\twoheadrightarrow}
+\newcommand{\insecCh}{\rightarrow}
+
+\newcommand{\onionCh}{\,\bullet[\rightarrow]\bullet\,}
+
+\newcommand{\idmxCh}{\onionCh}
+
+\newcommand{\dotChdot}{\,\bullet\!\!\leftrightarrow\!\!\bullet\,}
+\newcommand{\dotCh}{\,\bullet\!\!\leftrightarrow}
+\newcommand{\Chdot}{\leftrightarrow\!\!\bullet\,}
+
+\newcommand{\PsecChP}{\,\circ\!\!\!\rightarrow\!\!\circ\,}
+\newcommand{\PsecCh}{\,\circ\!\!\!\rightarrow\!\!\bullet\,}
+\newcommand{\secChP}{\,\bullet\!\!\!\rightarrow\!\!\circ\,}
+\newcommand{\PathCh}{\,\circ\!\!\!\rightarrow}
+\newcommand{\cnfChP}{\rightarrow\!\!\circ\,}
+
+\newcommand{\PChP}{\,\circ\!\!\leftrightarrow\!\!\circ\,}
+\newcommand{\dotChP}{\,\bullet\!\!\leftrightarrow\!\!\dot\,}
+\newcommand{\PChdot}{\,\circ\!\!\leftrightarrow\!\!\bullet\,}
+\newcommand{\PCh}{\,\circ\!\!\leftrightarrow}
+\newcommand{\ChP}{\leftrightarrow\!\!\circ\,}
+
+% \newcommand{\FsecCh}[3]{\iffont{secCh}_{#1,#2}(#3)}
+% \newcommand{\FathCh}[2]{\iffont{athCh}_{#1}(#2)}
+% \newcommand{\FcnfCh}[2]{\iffont{cnfCh}_{#1}(#2)}
+
+\newcommand{\athIssue}[1]{\iffont{athIssue(#1)}}
+\newcommand{\cnfIssue}[1]{\iffont{cnfIssue(#1)}}
+\newcommand{\secIssue}[1]{\iffont{secIssue(#1)}}
+\newcommand{\athRely}[1]{\iffont{athRely(#1)}}
+\newcommand{\cnfRely}[1]{\iffont{cnfRely(#1)}}
+\newcommand{\secRely}[1]{\iffont{secRely(#1)}}
+
+\newcommand{\pkEnc}[1]{\mathit{pkEnc}(#1)}
+\newcommand{\pkSig}[1]{\mathit{pkSig}(#1)}
+
+\newcommand{\DownGrade}{\mathrm{DownGrade}}
+\newcommand{\Combine}{\mathrm{Combine}}
+\newcommand{\SymOne}{\mathrm{Sym_1}}
+\newcommand{\SymTwo}{\mathrm{Sym_2}}
+\newcommand{\SymTre}{\mathrm{Sym_3}}
+\newcommand{\CreatePseudo}{\mathrm{CreatePseudo}}
+\newcommand{\UsePseudo}{\mathrm{UsePseudo}}
+\newcommand{\UseRealName}{\mathrm{UseRealName}}
+\newcommand{\PseudoDownGrade}{\mathrm{PseudoDownGrade}}
+\newcommand{\AuthPseudo}{\mathrm{AuthPseudo}}
+\newcommand{\AthTTP}{\mathrm{AthTTP}}
+\newcommand{\CnfTTP}{\mathrm{CnfTTP}}
+\newcommand{\SecTTP}{\mathrm{SecTTP}}
+
+
+\newcommand{\honest}[1]{\mathit{honest}(#1)}
+\newcommand{\dishonest}[1]{\iffont{dishonest}(#1)}
+\newcommand{\vddash}{\vdash\!\!\!\vdash}
+\newcommand{\mmodels}{\models\hspace{-0.3cm}\models}
+
+\newcommand{\IK}{\mathit{IK}}
+\newcommand{\agent}[1]{\iffont{agent}(#1)}
+
+\newcommand{\Fresh}{\mathit{Fresh}}
+\newcommand{\Payload}{\mathit{Payload}}
+\newcommand{\Public}{\mathit{Public}}
+\newcommand{\Tag}{\mathit{Tag}}
+\newcommand{\lift}[1]{\lceil #1\rceil}
+
+\newcommand{\pos}[1]{\mathit{pos}(#1)}
+\newcommand{\Var}{\mathcal{V}}
+
+\newcommand{\tagfont}[1]{\mathsf{#1}}
+\newcommand{\tSone}{\tagfont{S_1}}
+\newcommand{\tStwo}{\tagfont{S_2}}
+
+\newcommand{\optfix}[2][]{}
+%{{\fbox{opt}}} 
+%{\bf FIX}\footnote{{\bf FIX: #1}: #2}}
+%\newcommand{\fix}[2][]{{\bf FIX}\footnote{{\bf FIX #1}: #2}}
+
+\newcommand{\dyM}[2]{\mathcal{DY}_{#1}(#2)}
+\newcommand{\nf}[1]{#1_{\downarrow C/F}}
+\newcommand{\pattern}[2]{{\lceil\,#1\,\rceil}_{#2}}
+\newcommand{\decryptPat}[2]{{\lceil\!\!\lceil\,#1\,\rceil\!\!\rceil}_{#2}}
+
+\newcommand{\pubNA}{\mathit{pub}}
+\newcommand{\responseNA}{\mathit{response}}
+\newcommand{\checkRNA}{\mathit{check}}
+
+\newcommand{\pub}[1]{\pubNA(#1)}
+\newcommand{\response}[1]{\responseNA(#1)}
+\newcommand{\checkR}[1]{\checkRNA(#1)}
+
+\newenvironment{AnB}
+{ %\begin{minipage}{\linewidth}
+$ %      \begin{displaymath}
+        % \renewcommand{\arraystretch}{1.2}
+        \begin{array}{l}
+        }
+        {\end{array}
+        % \renewcommand{\arraystretch}{1}
+$ %      \end{displaymath}
+    %\end{minipage}
+  }
+
+\newcommand{\keyword}[1]{\mathtt{#1}}
+
+\newcommand{\Protocol}[5]{
+  \keyword{Protocol:}~\mathit{#1}\\
+  \keyword{Types:}\\
+  #2
+  \keyword{Knowledge:}\\
+  #3
+  \keyword{Actions:}\\
+  \begin{array}{ccccl}
+  #4
+  \end{array}\\
+  \keyword{Goals:}\\
+  \begin{array}{ccccl}
+  #5
+  \end{array}
+}
+\newcommand{\MidProtocol}[5]{
+%   \keyword{Knowledge:}\\
+%   #3
+%   \keyword{Actions:}\\
+  \begin{array}{ccccl}
+  #4
+  \end{array}\\
+}
+
+\newcommand{\MSC}[5]{
+  \keyword{Protocol:}~\mathit{#1}\\
+  \begin{array}{ccccl}
+    #4
+  \end{array}
+}
+
+\newcommand{\ShortProtocol}[5]{
+  \keyword{Protocol:}~\mathit{#1}\\
+  %\ldots\\
+  %\keyword{Actions:}\\
+  \begin{array}{ccccl}
+  #4
+\end{array}\\
+%\ldots
+}
+\newcommand{\CompactProtocol}[5]{
+  %\keyword{Protocol:}~\mathit{#1}\\
+  %\ldots\\
+  %\keyword{Actions:}\\
+  \begin{array}{ccccl}
+  #4
+  \hline
+  #5
+  \end{array}\\
+%\ldots
+}
+\newcommand{\Type}[2]{\quad #1\;\mathit{#2};\\}
+\newcommand{\Agent}{\keyword{Agent}}
+\newcommand{\Number}{\keyword{Number}}
+\newcommand{\Function}{\keyword{Function}}
+\newcommand{\TFunction}{\keyword{Function}}
+\newcommand{\Knowledge}[2]{\quad\mathit{#1}:~\mathit{#2};\\}
+\newcommand{\Create}[2]{
+  \multicolumn{5}{l}{\quad\#\mathit{#1}~\text{creates}~\mathit{#2}}\\}
+\newcommand{\Let}[2]{
+  \multicolumn{5}{l}{\quad\#\mathit{#1}~:=~\mathit{#2}}\\}
+\newcommand{\Action}[4]{\quad\mathit{#1}&#2&\mathit{#3}&:&\mathit{#4}\\}
+\newcommand{\Repeat}[5]{\multicolumn{5}{l}{
+    \quad#1=\mathit{#2}#3\mathit{#4}:\mathit{#5}}\\}
+\newcommand{\NGoal }[4]{\quad\mathit{#1}&#2&\mathit{#3}&:&\mathit{#4}\\}
+\newcommand{\AuthGoal}[3]
+{\multicolumn{5}{l}{
+    \quad\mathit{#1}~\keyword{authenticates}~\mathit{#2}~%
+    \keyword{on}~\mathit{#3}}\\}
+\newcommand{\SecGoal}[2]
+{\multicolumn{5}{l}{\quad\mathit{#1}~\keyword{secret~of}~\mathit{#2}}\\}
+\newcommand{\REML}[1]{\multicolumn{5}{l}{\quad\#\text{ #1}}\\}
+
+% \newenvironment{IF}
+% {\begin{displaymath}\begin{array}[c]{l}}
+% {\end{array}\end{displaymath}}
+
+\newcommand{\ifrule}[3]{#1\\ \ifarrow[#2]\\ #3\\[2ex]}
+
+\newcommand{\subterm}{\sqsubseteq}
+\newcommand{\propersubterm}{\sqsubset}
+\newcommand{\supterm}{\sqsupseteq}
+\newcommand{\propersupterm}{\sqsupset}
+
+\newcommand{\decryptions}[2]{\mathit{decryptions}_{#1}(#2)}
+\newcommand{\patternR}[3]{\pattern{#2}{#3}^{#1}}
+
+\newcommand{\instanceof}{\succeq}
+
+\newcommand{\secret}[2]{\iffont{secret}(#1,#2)}
+
+\newcommand{\idemix}{\textsf{Identity Mixer}}
+
+\newcommand{\xor}{\oplus}
+\newcommand{\algo}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\const}[1]{\algo{#1}}
+\newcommand{\vari}[1]{\ensuremath{\mathit{#1}}}
+
+\newcommand{\ana}[2]{\mathit{ana}_{#1}(#2)}
+\newcommand{\derivations}[3]{\mathit{derivations}_{#1}(#2,#3)}
+\newcommand{\dereq}[3]{\mathit{dereq}_{#1}(#2,#3)}
+\newcommand{\checks}[3]{\mathit{checks}_{#1}(#2,#3)}
+\newcommand{\given}[1]{\textsl{given}(#1)}
+\newcommand{\ungive}[1]{{#1}_*}
+
+%% Declare COLORS
+%% ============================
+\definecolor{grey}{rgb}{0.8,0.8,0.8}\newcommand{\grey}{\color{grey}}
+\definecolor{red}{rgb}{1,0,0}\newcommand{\red}{\color{red}}
+\definecolor{green}{rgb}{0,0.45,0}\newcommand{\green}{\color{green}}
+\definecolor{blue}{rgb}{0,0,1}\newcommand{\blue}{\color{blue}}
+
+\newcommand{\rpif}{\mathbb{P}}
+\newcommand{\rif}{\mathbb{R}}
+\newcommand{\rf}{\mathbb{F}}
+%\newcommand{\re}{\mathbb{E}}
+\newcommand{\md}{\mathbb{M}}
+\newcommand{\traces}{\mathbb{T}}
+\newcommand{\sigS}{\iffont{pk}(S)}
+\newcommand{\send}[2]{\iffont{snd}_{#1}(#2)}
+\newcommand{\recv}[2]{\iffont{rcv}_{#1}(#2)}
+\newcommand{\trace}{t}
+\newcommand{\evs}{\mathit{evs}}
+\newcommand{\evt}{\mathit{evt}}
+\newcommand{\mkset}[1]{[#1]} %\mathit{mkset}(#1)}
+\newcommand{\player}[1]{\mathit{player}(#1)}
+\newcommand{\used}[1]{{\mathit{ used\;#1}}}
+
+\newcommand{\sem}[1]{[\![ #1 ]\!]}
+
+\newcommand{\mX}{\mathcal{X}}
+
+\newcommand{\PVar}{\mathcal{P}}
+\newcommand{\SigmaP}{\Sigma_\PVar}
+\newcommand{\tsigmap}{\mathcal{T}_{\SigmaP}}
+\newcommand{\arity}[1]{\mathit{arity}(#1)}
+
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\dcrypt}[2]{\crypt{#1}{#2}^{-1}}
+\newcommand{\dscrypt}[2]{\scrypt{#1}{#2}^{-1}}
+\newcommand{\ccs}[1]{\mathit{ccs}(#1)}
+
+\newcommand{\interpretation}{\mathcal{I}}
+\newcommand{\intruder}{\mathsf{i}}
+
+\newcommand{\know}[1]{\mathit{know}(#1)}
+\newcommand{\verify}[1]{\mathit{verify}(#1)}
+\newcommand{\true}{\mathit{true}}
+
+\newcommand{\anl}[1]{&&&&\%\mathit{#1}\\}
+\newcommand{\REM}[1]{\;\;\keyword{\#}\;\;\text{#1}}
+
+\newcommand{\StoreOA}[2]{\keyword{Store}_{#1}(\,#2\,)}
+\newcommand{\CheckStoreOA}[2]{\keyword{CheckStore}_{#1}(\,#2\,)}
+\newcommand{\LoadOA}[2]{#2\leftarrow\keyword{Load}_{#1}}
+
+\newcommand{\Store}[2]{\multicolumn{5}{l}{
+    \quad\StoreOA{#1}{#2}}\\}
+\newcommand{\Load}[2]{\multicolumn{5}{l}{
+    \quad\LoadOA{#1}{#2}}\\}
+\newcommand{\CheckStore}[2]{\multicolumn{5}{l}{
+    \quad\CheckStoreOA{#1}{#2}}\\}
+
+%% IDEMIX
+
+\newcommand{\FormNym}{\mathsf{FormNym}}
+\newcommand{\GrantCred}{\mathsf{GrantCred}}
+\newcommand{\VerifyCred}{\mathsf{VerifyCred}}
+\newcommand{\VerifyCredOnNym}{\mathsf{VerifyCredOnNym}}
+%
+\newcommand{\masecNA}{\iffont{masec}}
+\newcommand{\masec}[1]{\masecNA(#1)}
+\newcommand{\ptagNA}{\iffont{p}}
+\newcommand{\ptag}[1]{\ptagNA(#1)}
+
+\newcommand{\commitNA}{\iffont{commit}}
+\newcommand{\commitIINA}{\iffont{commit_2}}
+\newcommand{\commitIIINA}{\iffont{commit_3}}
+
+\newcommand{\commit}[1]{\commitNA(#1)}
+\newcommand{\commitII}[1]{\commitIINA(#1)}
+\newcommand{\commitIII}[1]{\commitIIINA(#1)}
+
+\newcommand{\zkpNA}{\iffont{zkp}}
+\newcommand{\zkp}[1]{\zkpNA(#1)}
+%
+\newcommand{\user}[1]{\iffont{user}(#1)}
+\newcommand{\owner}[1]{\iffont{owner}(#1)}
+
+\newcommand{\Always}{\iffont{Always}}
+\newcommand{\Previously}{\iffont{Previously}}
+
+\newcommand{\pending}[1]{\iffont{pending}(#1)}
+
+\newcommand{\PK}[2]{\mathit{PK}\{(#1)\mid#2\}}
+\newcommand{\SPK}[3]{\mathit{SPK}\{(#1)\mid#2\}(#3)}
+
+\newcommand{\pack}[1]{\mathit{pack}(#1)}
+\newcommand{\hide}[1]{\mathit{hide}(#1)}
+
+\newcommand{\ToTrusted}[1]{\Action{#1}{\idmxCh}{T}}
+\newcommand{\TrustedTo}[1]{\Action{T}{\idmxCh}{#1}}
+
+\newcommand{\registered}[1]{\iffont{registered}(#1)}
+\newcommand{\granted}[1]{\iffont{granted}(#1)}
+\newcommand{\verified}[1]{\iffont{verified}(#1)}
+
+
+\newcommand{\dhh}{\mathit{dhh}}
+\newcommand{\dhf}{\mathit{dhf}}
+\newcommand{\DHtag}[1]{\mathit{tag}(#1)}
+\newcommand{\hk}{\mathit{hk}}
+\newcommand{\fk}{\mathit{fk}}
+\newcommand{\exps}{\mathit{exps}}
+
+\newcommand{\NIK}{\mathit{NIK}}
+
+\newcommand{\mathitNH}[1]{\textit{#1}}
+\newcommand{\from}[2]{\fromnoarg(#1;#2)} 
+\newcommand{\fromnoarg}{\mathit{from}} 
+\newcommand{\dfrom}[3]{\dfromnoarg(#1;#2;#3)}
+\newcommand{\dfromnoarg}{\mathitNH{D-from}}
+\newcommand{\DRednoarg}{\mathitNH{D-Red}_R}
+\newcommand{\DRed}[1]{\DRednoarg(#1)}
+\newcommand{\DRedRnoarg}{\DRednoarg}
+\newcommand{\DRedR}[1]{\DRedRnoarg(#1)}
+
+\renewcommand{\vector}[1]{\overline{#1}}
+
+\newcommand{\vars}[1]{\mathit{vars}(#1)}
+\newcommand{\dom}[1]{\mathit{dom}(#1)}
+
+\newcommand{\oldsnd}[1]{\bullet \ar@{-}[d]\ar[rr]^{#1}&& \\ }
+\newcommand{\oldrcv}[1]{\bullet 
+  \ar@{-}[d]
+  &&\ar[ll]_{#1} \\ }
+\newcommand{\oldrcvb}[2]{\bullet 
+  \ar@{-}|{#1}[d]
+  &&\ar[ll]_{#2} \\ }
+% \newcommand{\rcv}[2][]{\bullet 
+% \ifthenelse{\equal(#1){}}{
+%   \ar@{-}[d]
+% }{
+%   \ar@{-}|{#1}[d]
+% }
+% &&\ar[ll]_{#2} \\ }
+
+
+% \newcommand{\ifarrow}[1][]{
+%   \ifthenelse{\equal{#1}{}}{
+%     \Rightarrow
+%   }{
+%     =\!\!\![{#1}]\!\!\!\hspace{1pt}\Rightarrow
+%   }}
+\newcommand{\ak}[1]{\akS(#1)}
+%\newcommand{\pk}[1]{\pkS(#1)}
+%\newcommand{\pkS}{\mathsf{pk}}
+\newcommand{\ck}[1]{\ckS(#1)}
+\newcommand{\akS}{\iffont{ak}}
+\newcommand{\ckS}{\iffont{ck}}
+\newcommand{\encath}[3]{\crypt{\inv{\ak{#1}}}{\atag,#2,#3}}
+\newcommand{\enccnf}[2]{\crypt{\ck{#1}}{\ctag,#2}}
+\newcommand{\encsec}[3]{\crypt{\ck{#2}}{\crypt{\inv{\ak{#1}}}{\stag,#2,#3}}}
+\newcommand{\atag}{\iffont{atag}}
+\newcommand{\ctag}{\iffont{ctag}}
+\newcommand{\stag}{\iffont{stag}}
+\newcommand{\FsecCh}[3]{\iffont{secCh}_{#1,#2}(#3)}
+\newcommand{\FathCh}[3]{\iffont{athCh}_{#1,#2}(#3)}
+\newcommand{\FcnfCh}[2]{\iffont{cnfCh}_{#1}(#2)}
+\newcommand{\pencath}[3]{\crypt{\inv{#1}}{\atag,#2,#3}}
+\newcommand{\enccnfp}[2]{\crypt{#1}{\ctag,#2}}
+\newcommand{\pencsec}[3]{\crypt{\ck{#2}}{\crypt{\inv{#1}}{\stag,#2,#3}}}
+\newcommand{\encsecp}[3]{\crypt{#2}{\crypt{\inv{\ak{#1}}}{\stag,#2,#3}}}
+\newcommand{\pencsecp}[3]{\crypt{#2}{\crypt{\inv{#1}}{\stag,#2,#3}}}
+
+\usepackage{listings}
+\lstset{language=python,basicstyle=\footnotesize\ttfamily,keywordstyle=\color{blue}\bfseries,
+	showstringspaces=false,stringstyle=\ttfamily\color{green}}
+%[language=python,basicstyle=\footnotesize\ttfamily,    stringstyle=\ttfamily\color{green}]
+\newcommand{\mylstinline}[1]{\lstinline[language=python,mathescape=true,basicstyle=\ttfamily]{#1}}
+\newcommand{\lil}[1]{\mylstinline{#1}}
+
+\newcommand{\myurl}[1]{{\color{blue}\url{#1}}}
+%\newcommand{\replstudents}{{https://repl.it/student/classrooms/186198}}
+%\newcommand{\replstudents}{{https://repl.it/team/Intro2Programmi}}
+\newcommand{\replstudents}{{http://bit.ly/IPDPSSSA20\_21Repl}}
+%\newcommand{\replstudentsinvitation}{{https://repl.it/classroom/invite/olYrkRa}}
+%\newcommand{\replstudentsinvitation}{{https://repl.it/teams/join/rqkmcubcfzeyzaejhtfvcafcxcavsgtf-Intro2Programmi}}
+\newcommand{\replstudentsinvitation}{{http://bit.ly/IPDPSSSA20\_21ReplFirst}}
+
+
+\newcommand{\homepage}{http://bit.ly/PDAISSSA22\_23}
+%\newcommand{\homepagesetup}{\homepage-setup}
+\newcommand{\homepagesetup}{\homepage}
+%\newcommand{\homepagesetup}{https://bit.ly/Intro2Python1920SSSA-setup}
+%\newcommand{\homepageslides}{https://bit.ly/Intro2Python1920SSSA-slides-code}
+%\newcommand{\homepageslides}{\homepage-slides-code}
+\newcommand{\homepageslides}{\homepage}

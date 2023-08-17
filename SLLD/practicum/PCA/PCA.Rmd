@@ -1,0 +1,602 @@
+---
+title: "*Principal Component Analysis*"
+author: "S.Tonini, F. Chiaromonte (special thanks to J. Di Iorio and L. Insolia)"
+date: "February 16th 2023"
+output:
+  pdf_document:
+    toc: true
+  html_document: default
+urlcolor: blue
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) # just to clean the pdf files, not recommended in practice!
+```
+
+
+\section{Introduction}
+
+Working in high-dimensional spaces can be undesirable for several reasons so it could be useful to project the features to a space of fewer dimensions.
+
+Principal Component Analysis (PCA) is a \textit{Dimension Reduction} technique for unsupervised problems. 
+It projects/transforms the data into a lower-dimensional space so that the lower-dimensional representation retains some meaningful properties of the original data, ideally close to its intrinsic dimension.
+
+\subsection{Libraries}
+We are going to use:
+\begin{itemize}
+  \item \textbf{mvtnorm}: \textit{Multivariate Normal and t Distributions}
+  \item \textbf{factoextra}: \textit{Extract and Visualize the Results of Multivariate Data Analyses}
+  \item \textbf{scales}: \textit{Scale Functions for Visualization}
+  \item \textbf{ellipse}: \textit{Functions for drawing ellipses and ellipse-like confidence regions}
+  \item \textbf{corrplot}: \textit{Visualization of a Correlation Matrix}
+\end{itemize}
+
+```{r}
+library(mvtnorm)    # for the toy simulated example
+library(factoextra) # contains also decathlon data
+library(scales)     # to create ggplot-like figures in base R (color transparency)
+library(ellipse)    # to add elliptical confidence regions in base R plots
+library(corrplot)   # correlation plots
+```
+
+\subsection{Data} 
+Today we are going to use the \textbf{decathlon2}  data set, which is available in the \textbf{factoextra} package.
+It consists of 27 observations (athletes) and the following 13 variables (performance).
+```{r}
+help(decathlon2)
+head(decathlon2)
+```
+
+
+\section{A Toy Example of Dimension Reduction}
+
+Let's simulate a 2-dimensional data set from a Gaussian distribution with higher dispersion along the $y$-axis.
+
+```{r}
+set.seed(1234)                # set seed for reproducibility
+mu  <- c(1, 2)                # location/mean vector (p times 1)
+sig <- cbind(c(1,1), c(1,4))  # covariance matrix (p times p)
+n   <- 100                    # number of points
+
+X <- rmvnorm(n, mu, sig)      # data generation
+colnames(X) <- c("x","y")     # renaming
+head(X)                       # visualize our data
+plot(X, asp=1)                # plot our data (with fixed aspect ratio)
+
+points(mu[1], mu[2],          # add centroid
+       col=alpha("red", 0.5), # marker color and transparency
+       pch=3,                 # marker type
+       lwd=5,                 # marker width
+       cex=2)                 # marker size
+
+# iterate across confidence levels
+conflev <- c(0.5, 0.75, 0.9, 0.95, 0.99, 0.999)
+for (confi in conflev){
+  lines(ellipse(sig, centre=mu, level=confi),    # add elliptical confidence regions
+        col = alpha("red", 0.5),                 # add color and transparency
+        lty = 3)                                 # dashed lines
+}
+
+```
+
+How can we reduce the dimension of these data? 
+
+We can reduce the number of features (columns) in different ways.
+Let's see some.
+
+\subsection{Using the sample mean}
+The sample mean is the easiest 0-dimensional data reduction method, because it allows to collapse all the information into a single point.
+```{r}
+med <- colMeans(X)              # column-wise means
+med
+
+plot(X, asp=1,                  # plotting the points
+     col=alpha('black', 0.5))   # reduce the transparency
+
+points(med[1], med[2],          # plotting their centroid
+       col='red', pch=3,        # color, marker type
+       cex = 2, lwd=3)          # size, width
+```
+
+What is the variance?
+
+What is the associated loss of information?
+
+What is the error?
+
+We can think of the error in this way: 
+```{r}
+
+plot(X, asp=1,                  # plotting the points
+     col=alpha('black', 0.5))   # reduce the transparency   
+
+for(i in 1:n){                  # for each point
+  lines(rbind(X[i,], med),      # plot the "error"
+        col=alpha('blue',0.2))
+}  
+
+points(med[1], med[2],          # plotting their centroid
+       col='red', pch=3,        # color, marker type
+       cex = 2, lwd=3)          # size, width
+
+
+```
+
+We are collapsing our data to one point, the sample mean (also known as PC0). The error is high.
+
+\subsection{Projecting the data on a new axis}
+We can easily identify two axes from the sample mean: an $horizontal$-axis, and a $vertical$-axis.
+```{r}
+
+plot(X, asp=1, col=alpha('black', 0.5))     # data
+
+abline(h=med[2], lty=2)                     # horizontal axis 
+points(X[,1], rep(med[2], n),               # projected points
+       col=alpha('red',0.5))
+
+abline(v=med[1], lty=2)                     # vertical axis
+points(rep(med[1], n), X[,2],               # projected points
+       col=alpha('blue',0.5))   
+
+for(i in 1:n){                  
+  lines(rbind(X[i,], c(X[i,1],med[2])),     # plot the horiz. proj. "error"
+        col=alpha('red',0.1))
+  
+  lines(rbind(X[i,], c(med[1], X[i,2])),    # plot the vert. proj. "error"
+    col=alpha('blue',0.1))
+}  
+
+points(med[1], med[2], col='green',         # centroid
+       pch=3, cex = 1, lwd=3)
+
+legend(-10,6,                               # legend location
+       c("horiz. proj.","vert. proj","mean"),
+       col=c("red","blue","green"), 
+       pch=c(1,1,3))
+
+# comparing variances
+var(X[,1])                                  # red dots variance
+var(X[,2])                                  # blue dots variance
+```
+
+Which of the two axis maximizes the variance?
+```{r}
+var(X[,2]) > var(X[,1])
+```
+
+The vertical axis. 
+Blue points are more scattered and the error (sum of the lenghts of blue segments) is lower.
+
+```{r}
+# 2 times 1 panels in a figure
+par(mfrow=c(1,2))                           
+
+# left panel: horiz. axis
+plot(X, asp=1, col=alpha('black', 0.5))
+abline(h=med[2], lty=2)
+points(X[,1], rep(med[2], n), col='red')
+for(i in 1:n)
+  lines(rbind(X[i,], c(X[i,1], med[2])), col=alpha('red',0.3))
+
+# right panel: vert. axis
+plot(X, asp=1, col=alpha('black', 0.5))
+abline(v=med[1], lty=2)
+points(rep(med[1], n), X[,2], col='blue') 
+for(i in 1:n)
+  lines(rbind(c(med[1],X[i,2]),X[i,]), col=alpha('blue',0.3))
+
+# reset it as 1 x 1
+par(mfrow=c(1,1))                           
+```
+
+Using this strategy we can find the "best" axis -- i.e., the one maximizing the variance.
+Let's try a brute force approach.
+```{r}
+
+# Compute the variance across (almost) all possible directions
+theta   <- seq(0, 2*pi, by = 2*pi/360)    # angles
+Var     <- rep(NA, length(theta))
+
+# centered data
+Xc = scale(X, scale=F)
+
+for(i in 1:length(theta))
+{
+  a      <- c(cos(theta[i]), sin(theta[i]))  # directional vector
+  proj   <- Xc %*% a                         # projecting points
+  Var[i] <- var(proj)                        # computing variance
+}
+
+# plotting the variance for each direction/angle
+plot(theta, Var, type = 'l', 
+     col='red', lwd = 2)
+abline(v=c(0, pi/2, pi, 3/2*pi, 2*pi),       # fundamental angles
+       lty=2)    
+```
+
+
+The direction with highest variability is identified by the maximun of the function.
+```{r}
+max.var   <- max(Var) # maximum variance
+# max.theta <- theta[which.max(Var)] # theta angle with maximum variance (only the 1st)
+max.theta <- theta[Var==max.var] # theta angle with maximum variance (not only the 1st)
+max.theta
+
+# projected data (see that their variance is equal to the maximum)
+projx <- X %*% c(cos(max.theta[1]), sin(max.theta[1]))
+var(projx)
+max.var
+
+# plotting the Variance for each direction/angle
+plot(theta, Var, type = 'l', col='red', lwd = 2, lty=1)
+abline(v=c(0, pi/2, pi, 3/2*pi, 2*pi), lty=2) # fundamental angles
+points(max.theta, rep(max.var, length(max.theta)), 
+       pch=4, col='blue', lwd=3, cex=2)
+```
+
+We just found the first principal component (PC1) as the axis maximizing the variance.
+Let's plot the solution we have found.
+
+\textit{Remark}: there is rotational invariance, so we can pick any maximizer theta (e.g., the first one).
+```{r}
+
+# slope
+slopepc1 <- sin(max.theta[1])/cos(max.theta[1])
+
+# plot centered data
+plot(Xc, asp=1, col='black')
+abline(v=0, lty=3)
+abline(h=0, lty=3)
+# plot PC1
+abline(a=0,b=slopepc1, col = "red", lty=1, lwd=2)
+
+```
+
+Note  that there is only another component orthogonal to PC1 (and centered at 0) since we are in a 2-dimensional setting.
+
+Thus, we can also view PCA as a change of bases/rotation.
+```{r}
+
+# rotation matrix
+R1 <- c(cos(max.theta[1]), -sin(max.theta[1]))
+R2 <- c(sin(max.theta[1]), cos(max.theta[1]))
+R <- rbind(R1, R2)
+
+# plot rotated data such that PC1 and PC2 are now the "standard" bases
+plot(Xc %*% R, asp=1)
+abline(v=0, col="red",lty=2, lwd=2)
+abline(h=0, col="red",lty=2, lwd=2)
+
+```
+
+
+Finally, notice that maximizing the variance is equivalent to minimizing squared distances.
+```{r}
+
+# Compute the squared distances across (almost) all possible directions
+theta2   <- seq(0, 2*pi, by = 2*pi/360) # angles
+Dist    <- rep(NA, length(theta))
+
+for(i in 1:length(theta))               # for each angle theta
+{
+  mi = sin(theta2[i])/cos(theta2[i])    # slope of the associated line
+  distk = rep(NA, n)                    # initialize point-to-line distances
+  for (k in 1:n){                       # compute them
+    distk[k] = abs(-mi*Xc[k,1]+Xc[k,2])/sqrt(mi^2+1)
+  }
+  Dist[i] = mean(distk^2)               # store average of squared distances
+}
+
+# min and argmin for the distance method
+min.dist   <- min(Dist)                            # min distance
+min.theta2 <- theta2[Dist==min.dist]               # theta angle with min distances
+
+# compare the two approaches
+
+# plotting the Variance for each direction/angle
+plot(theta, Var, type = 'l', col='red', 
+     lwd = 2, lty=1, ylab = "Objective value")
+abline(v=c(0, pi/2, pi, 3/2*pi, 2*pi), lty=2)      # fundamental angles
+points(max.theta, rep(max.var, length(max.theta)), 
+       pch=4, col='blue', lwd=3, cex=2)
+
+# plotting the avg squared distances for each direction/angle
+points(theta2, Dist, type = 'l', 
+       col='cyan', lwd = 2, lty=1)
+abline(v=c(0, pi/2, pi, 3/2*pi, 2*pi), lty=2)      # fundamental angles
+points(min.theta2, rep(min.dist, length(min.theta2)),
+       pch=4, col='blue', lwd=3, cex=2)
+
+legend(4,3,
+       c("Variance","Avg. sq. distances"),
+       col=c("red","cyan"), 
+       lty=c(1,1),
+       bg="white")
+```
+
+
+Global minima/maxima do differ, but are the arguments (theta values) minimizing/maximizing these functions the same?
+```{r}
+max.theta
+min.theta2
+```
+
+The same result can be obtained through low-rank approximations.
+
+The functions \textbf{princomp()} and \textbf{prcomp()} in the \textbf{stats} package use the spectral decomposition and the singular value decomposition (SVD), respectively.
+We will focus on the latter.
+
+
+\section{PCA on decathlon2 data}
+
+We are going to perform PCA to the first 10 columns of the \textbf{decathlon2} data set to analyze athletes performance.
+
+```{r}
+# select only the first 10 columns
+decathlon2<- decathlon2[, 1:10]
+head(decathlon2)
+dim(decathlon2)
+summary(decathlon2)
+```
+
+To perform PCA we use the function \textbf{prcomp}.
+
+```{r}
+help(prcomp)
+```
+
+Among other things, the function takes as input:
+\begin{itemize}
+  \item \textbf{data:} a data frame
+  \item \textbf{scale:} a logical value (TRUE/FALSE) indicating whether the variables should be scaled to have unit variance before the analysis takes place
+\end{itemize}
+Note that by default variables are centered to have zero mean.
+
+Therefore, to perform PCA after scaling the data, we run:
+
+```{r}
+res <- prcomp(decathlon2, scale = TRUE)
+str(res)
+```
+
+The result is a list containing 5 elements:
+\begin{itemize}
+  \item \textbf{sdev:} the standard deviations of the principal components (square root of the eigenvalues)
+  \item \textbf{rotation:} the matrix of variable loadings (eigenvectors)
+  \item \textbf{center:} the centering used if \textbf{scale=TRUE}
+  \item \textbf{scale:} the scaling used if \textbf{scale=TRUE}
+  \item \textbf{x:} the scores, i.e. the rotated data
+\end{itemize}
+
+\section{Selecting the number of components}
+The selection of a "suitable" number of components is non-trivial since in unsupervised learning tasks no ground-truth/labels/response variable is available (which may be used to assess and validate our results otherwise, e.g. through cross-validation -- more on this later). 
+
+However, some "rules of thumb" have been developed.
+For instance, one may consider the \textbf{percentage of variance explained} (\textbf{PVE}), or the \textbf{cumulative PVE}.
+
+Here we use the \verb|get_eig| function of the \textbf{factoextra} package.
+```{r}
+help(get_eig)
+# eigenvalue, PVE and cumulative PVE for each PC
+get_eig(res)
+```
+
+
+Based on this information we can create a \textbf{scree plot}, and try to find an \textit{elbow} (i.e. an inflection point) therein.
+```{r}
+
+fviz_eig(res, addlabels = TRUE, ylim = c(0, 50))
+
+```
+
+Sometimes, it is not easy to identify an elbow, or this might be associated to a particularly low cumulative PVE.
+
+Thus, it is common to fix an \textbf{acceptance threshold} a priori (e.g. 80%), and then look at the \textbf{cumulative PVE}.
+
+```{r}
+plot(get_eig(res)$cumulative.variance.percent, 
+     type='b', axes=F, xlab='Dimensions', ylab='cumulative PVE', ylim=c(0,100))
+abline(h=100, col=alpha('blue',0.5))
+abline(h=80, lty=2, col='red', lwd=2) # thresholding
+box()
+axis(2, at=0:100,labels=0:100)
+axis(1,at=1:ncol(decathlon2),labels=1:ncol(decathlon2))
+grid()
+```
+
+\section{Loadings interpretation}
+Let's focus on the loadings, i.e., the eigenvectors representing the directions of the PCs.
+
+```{r}
+loadings <- res$rotation
+loadings
+```
+
+We can plot the first two PCs (PC1 and PC2) in the \textbf{graph of variables} (also called correlation circle).
+
+Here the importance of the original features is represented by the \textbf{color code}:
+\begin{itemize}
+  \item red: \textit{high}
+  \item blue: \textit{medium} 
+  \item white: \textit{low}
+\end{itemize}
+and by the lenght of the vector (its \textit{closeness} to the circle).
+
+In these plots, positively correlated variables have same direction (they are close to each other, i.e. they have a small angle in between).
+Negatively correlated variables have opposite directions.
+Uncorrelated variables are orthogonal.
+
+\textit{Remark:} a lower value for "X100m", "X400m", "X110m hurdle" means a better performance. 
+So it makes sense that they are negatively correlated with "long jump".
+
+```{r}
+fviz_pca_var(res,
+             col.var = "contrib", # Color by contributions to the PC
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE )    # Avoid text overlapping
+
+```
+
+We also see that "X100m", "Long jump" and "High jump" and "Pole vault" contribute the most to PC1 and PC2.
+
+If we want to show also the individuals we can run the \textbf{biplot of individuals and variables}.
+Here similar athletes are grouped together.
+
+```{r}
+fviz_pca_biplot(res, repel = TRUE,
+                col.var = "#2E9FDF", # Variables color
+                col.ind = "#696969"  # Individuals color
+)
+```
+
+Along PC1 we tend to find athletes with higher/lower overall performance, which are mainly related to agility.
+On PC2 we can distinguish stronger athletes from others.
+
+\textit{Remark:}  observations are represented by their projections, but variables are represented by their correlations.
+
+Information regarding all the PCs (e.g., the first 4) can be obtained in the following way:
+```{r}
+plot.new()
+par(mar = c(1,4,0,2), mfrow = c(4,1))
+for(i in 1:4)
+{
+  barplot(loadings[,i], ylim = c(-1, 1),
+          ylab=paste0("PC", i))           # this is not the axis label, but the plot title
+  abline(h=0)
+}
+```
+
+
+The "importance" of each variable across different PCs is also contained in the field \textbf{cos2} of the function \verb|get_pca_var|:
+\begin{itemize}
+  \item A high cos2 indicates a good representation of the variable on the principal component. In this case the variable is positioned close to the circumference of the correlation circle.
+  \item A low cos2 indicates that the variable is not perfectly represented by the PCs. In this case the variable is close to the center of the circle.
+\end{itemize}
+For a given variable, the sum of the cos2 on all the principal components is equal to one.
+
+```{r}
+help(get_pca_var)
+varpca <- get_pca_var(res)
+varpca
+
+corrplot(varpca$cos2, is.corr=FALSE)
+```
+
+
+\section{Robust PCA}
+
+Unlike classical PCA, there exist robust versions of PCA (e.g., ROBPCA) that are resistant to outliers in the data. 
+
+Here robust loadings are computed in a robust manner (e.g., through projection-pursuit techniques and the minimum covariance determinant method) to remove the effects of outliers.
+
+We will focus on the \textbf{PcaHubert} function within the \textbf{rrcov} package, and itdepends on a trimming proportion $\alpha=h/n$ denoting the fraction of points (with larger distances) that do not contribute to the objective function (in this case $h$ out of $n$).
+
+```{r}
+## 
+
+set.seed(123)
+library(rrcov)
+help(PcaHubert)
+
+# PCA of the Hawkins Bradu Kass's Artificial Data
+# The first 14 observations are outliers, created in two groups: 
+# 1--10 (more difficult to detect) and 11--14.
+data(hbk)
+pairs(hbk)
+
+pcaRob <- PcaHubert(hbk, k=4, alpha=0.75)
+print("Robust output")
+pcaRob
+pcaRob$loadings
+
+## Compare with the classical PCA
+pca <- prcomp(hbk)
+cat("\n\n")               # line break
+print("Classical output")
+pca
+
+## Compare with the classical PCA on clean data
+pcaclean <- prcomp(hbk[15:nrow(hbk), ])
+cat("\n\n")               # line break
+print("Classical output on clean data")
+pcaclean
+
+
+```
+
+Let's plot their solutions:
+```{r}
+
+par(mfrow=c(1,2)) 
+
+plot(pcaRob)                    # distance plot
+
+pca2 <- PcaHubert(hbk, k=2)
+plot(pca2)                      # PCA diagnostic plot (or outlier map)
+```
+
+
+```{r}
+
+par(mfrow=c(1,3)) 
+
+## Use the standard plots available for prcomp and princomp
+screeplot(pcaRob, main="Robust PCA")
+screeplot(pca ,main="PCA")
+screeplot(pcaclean ,main=" clean PCA")
+```
+
+
+```{r}
+par(mfrow=c(1,3)) 
+
+biplot(pcaRob)
+title("Robust PCA", line = 3)
+
+biplot(pca)
+title("PCA", line = 3)
+
+biplot(pcaclean)
+title("clean PCA", line = 3)
+
+
+```
+
+Retrieve the robust covariance matrix:
+```{r}
+
+print("Cov by Robust PCA (25% trimming)")
+py <- PcaHubert(hbk, alpha=0.75)
+cov.1 <- py@loadings %*% diag(py@eigenvalues) %*% t(py@loadings)
+cov.1    
+
+cat("\n\n")
+print("Cov by another robust method")
+CovRobust(hbk, CovControlSest(method="auto",))
+
+cat("\n\n")
+print("Cov on clean data")
+cov(hbk[15:nrow(hbk), ])
+
+cat("\n\n")
+print("Empirical output (i.e. 0% trimming)")
+cov(hbk)
+
+```
+
+
+
+
+\section{Multidimensional Scaling}
+Multidimensional scaling (MDS) is useful to visualize the level of similarity of individual cases in a dataset. 
+MDS is used to translate "information about the pairwise 'distances' among a set of "n" objects or individuals" into a configuration of "n" points mapped into an abstract Cartesian space.
+
+See for instance:
+\begin{itemize}
+  \item cmdscale() [stats package]: Classical (metric) multidimensional scaling.
+  \item isoMDS() [MASS package]: Kruskal’s non-metric multidimensional scaling (one form of non-metric MDS).
+  \item sammon() [MASS package]: Sammon’s non-linear mapping (one form of non-metric MDS).
+\end{itemize}
+
+These functions require a distance object as input and the number of dimensions in the reduced space (by default equal to 2).

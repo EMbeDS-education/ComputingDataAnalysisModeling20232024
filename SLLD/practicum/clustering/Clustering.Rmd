@@ -1,0 +1,588 @@
+---
+title: "*Clustering*"
+author: "S. Tonini, F. Chiaromonte (special thanks to J. Di Iorio and L. Insolia)"
+date: "February 14th 2023"
+output:
+  pdf_document:
+    toc: true
+  html_document: default
+urlcolor: blue
+---
+  
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) # just to clean the pdf files, not recommended in practice!
+```
+
+
+\section{Introduction}
+
+
+Clustering is the task of grouping a set of objects in such a way that objects in the same group (called a cluster) are more similar (according to a similarity or dissimilarity measure) to each other than to those in other groups (clusters). Thus, clustering looks to find homogeneous subgroups among the objects.
+
+Note that we can cluster observations on the basis of the features, or features on the basis of the observations. We will focus on clustering observations on the basis of the features.
+
+Cluster analysis itself is not one specific algorithm, but the general unsupervised classification ("no label") task to be solved. It can be achieved by various algorithms. We are going to focus on exhaustive algorithms which determine a hard partition: every point belongs to one group, and one group only.
+
+\subsection{Libraries}
+We are going to use 
+\begin{itemize}
+\item \textbf{cluster}: \textit{Finding Groups in Data}
+\item \textbf{NbClust}: \textit{Determining the Relevant Number of Clusters in a Data Set}
+\item \textbf{factoextra}: \textit{Extract and Visualize the Results of Multivariate Data Analyses}
+\end{itemize}
+```{r laodPackages, message=FALSE, warning=FALSE}
+
+# do not forget to install them first! e.g.,
+# install.packages("cluster")
+# or something automated such as: 
+# if(!require(cluster)){install.packages("cluster"); library(cluster)}
+
+library(cluster)       # methods for Cluster analysis
+library(factoextra)    # to extract and visualize the output of  multivariate analyses
+library(NbClust)       # to determine the optimal number of clusters
+```
+
+\subsection{Data}
+
+Today we are going to use the \textit{iconic} \textbf{Anderson's Iris data set} 
+(you can find more details on [Wikipedia](https://en.wikipedia.org/wiki/Iris_flower_data_set)).
+
+The data set consists of 50 samples from three species of iris flowers (\textit{Iris setosa}, \textit{Iris virginica} and \textit{Iris versicolor}).
+Four features were measured from each sample: 
+\begin{itemize}
+  \item sepal length \& width
+  \item petal length \& width
+\end{itemize}
+which are all measured in centimeters. 
+
+The Iris dataset is available in several R packages.
+You might want to give a look at the \textbf{datasets} package.
+```{r laodIris, message=FALSE, warning=FALSE}
+
+library(utils)                     # a general utility package
+# ?data()                          # list all available data sets across all loaded packages
+# try(data(package = "cluster"))   # list the data sets in the cluster package
+
+library(datasets)
+help(datasets)
+# library(help = "datasets")       # full list of datasets
+help(iris)
+data("iris")
+head(iris)
+
+```
+
+Let us remove the \textit{Species} label and plot the data in a pairwise scatterplot (\textbf{pairs} command). 
+How many clusters are present?
+```{r}
+iris4 <- iris[,1:4]   # Excluding the "Species" label in column 5
+iris4 <- scale(iris4) # Standardize (column-wise)
+pairs(iris4)
+```
+
+
+
+This is the scatterplot with species labels.
+```{r} 
+# all the extra commands are used just to include a legend out of the figure panel
+pairs(iris4, main="Iris Data (red=setosa,green=versicolor,blue=virginica)",
+      pch=21, bg=c("red","green3","blue")[unclass(iris$Species)],
+      oma=c(3,3,3,15))
+par(xpd = TRUE)
+legend("bottomright", fill = c("red","green3","blue"), legend = c( levels(iris$Species)))
+```
+
+
+
+
+\section{Hierarchical Clustering}
+
+These algorithms do not provide a unique data partition, but rather a nested hierarchical structure -- clusters are merged according to certain distances. 
+The hierarchy is usually represented by a dendrogram. 
+The $y$-axis marks the "similarity" across groups -- i.e., the distance at which clusters are merged -- and the $x$-axis contains a permutation of the grouped objects in such a way that clusters do not mix (i.e., vertical lines to not cross each other).
+
+Pros:
+\begin{itemize}
+  \item It does not require us to pre-specify the number of clusters $\boldsymbol{k}$
+  \item Dendrogram results in an attractive and simple tree-based representation of the observations
+\end{itemize}
+
+Cons: 
+\begin{itemize}
+  \item Often the choice of where to cut the dendrogram to select clusters is not so clear
+  \item The assumption of hierarchical structure might be unrealistic (i.e. clusters obtained by cutting the dendrogram at a given height are necessarily nested within the clusters obtained by cutting the dendrogram at any greater height)
+\end{itemize}
+
+
+Strategies for hierarchical clustering generally fall into two types:
+\begin{itemize}
+  \item Agglomerative Hierarchical Clustering
+  \item Divisive Hierarchical Clustering
+\end{itemize}
+
+\subsection{Agglomerative Hierarchical Clustering}
+
+It is a “bottom-up” approach which generates a sequence of nested partitions of the data -- progressively less granular:
+\begin{enumerate}
+  \item Start with $n$ clusters: each containing one data point ($k=n$)
+  \item At each iteration: 
+    \begin{itemize}
+      \item Find the ``closest pair'' of clusters
+      \item Merge them and update the list of clusters
+      \item Update the matrix of cluster distances (it captures their similarity/dissimilarity)
+  \end{itemize}
+  \item Iterate until all data points belong to a single cluster (i.e., a giant group with $k=1$)
+\end{enumerate}
+
+To perform the Agglomerative Hierarchical Clustering we can use the basic function \textbf{hclust}.
+
+```{r}
+help(hclust)
+```
+
+We can see that the function requires:
+\begin{itemize}
+  \item $\boldsymbol{d}$: a dissimilarity structure
+  \item \textbf{method}: the linkage method to be used.
+\end{itemize}
+
+A dissimilarity matrix based on the \textbf{Euclidean distance} can be produced by \textbf{dist} in the following way.
+\textit{Note}: in principle this is a symmetric matrix of size $n \times n$ with zero entries on the main diagonal.
+```{r}
+eu_iris <- dist(iris4, method='euclidean')
+class(eu_iris) # note: this is not a matrix, but an object of a specific class
+```
+
+```{r}
+dim(as.matrix(eu_iris))    # we can transform it into the n-by-n matrix of distances
+as.matrix(eu_iris)[1:5,1:5] # distances between the first 5 observations
+```
+
+Now we are ready to create the hierarchical structure, based on the following linkage methods.
+```{r}
+hc_single   <- hclust(eu_iris, method='single')     # single linkage
+hc_complete <- hclust(eu_iris, method='complete')   # complete linkage
+hc_average  <- hclust(eu_iris, method='average')    # average linkage
+hc_centroid <- hclust(eu_iris, method='centroid')   # centroid linkage
+
+str(hc_single)            # it's a list
+head(hc_single$merge, 10) # see the first 10 aggregations
+# to see its interpretation, check the "Value" (i.e., output) paragraph in here:
+#help(hclust)
+
+# to check that obs 102 and 143 are merged first
+#as.matrix(eu_iris)[102,143]  # look that the distance between 102 and 143 is 0
+#iris[c(102,143),]  # they report the same values for all covariates
+
+```
+  
+  The hierarchy is represented through a dendrogram: a plot illustrating a sequence of data partitions into clusters.
+```{r warning=FALSE}
+  # par(mfrow=c(2,2))
+  fviz_dend(hc_single,   as.ggplot = TRUE, show_labels = FALSE, main='Euclidean-Single')
+  fviz_dend(hc_complete, as.ggplot = TRUE, show_labels = FALSE, main='Euclidean-Complete')
+  fviz_dend(hc_average,  as.ggplot = TRUE, show_labels = FALSE, main='Euclidean-Average')
+  fviz_dend(hc_centroid, as.ggplot = TRUE, show_labels = FALSE, main='Euclidean-Centroid')
+```
+  
+  To retrieve any given clustering solution, we have to cut the dendrogram using the \textbf{cutree} command.
+  
+  The cut can be performed according to:
+    \begin{itemize}
+  \item $\boldsymbol{k}$: an integer scalar or vector (if you want more than one partition) with the desired number of groups
+  \end{itemize}
+  
+```{r}
+  
+  cluster_k <- cutree(hc_complete, k = 2)     # identify 2 groups
+  cluster_k
+  
+  fviz_dend(hc_complete, k = 2, k_colors = "jco", 
+            as.ggplot = TRUE, show_labels = FALSE, 
+            main='Euclidean-Complete')
+  
+  pairs(iris4, col=cluster_k)                 # pairwise scatterplot with clusters
+  
+```
+  
+  \begin{itemize}
+  \item $\boldsymbol{h}$: numeric scalar or vector with heights where the tree should be cut
+  \end{itemize}
+```{r}
+  clHeight <- 4.5
+  cluster_h <- cutree(hc_complete, h = clHeight)    #identify groups below a certain height 
+  cluster_h
+  
+  fviz_dend(hc_complete, h = clHeight, k_colors = "jco", 
+            as.ggplot = TRUE, show_labels = FALSE, 
+            main='Euclidean-Complete')+
+    geom_hline(yintercept = clHeight, linetype = 2, col="red")
+  
+  
+  pairs(iris4, col=cluster_h)                       # pairwise scatterplot with clusters
+```
+  
+  \subsection{Divisive Hierarchical Clustering}
+  
+  It is a “top-down” approach, which generates a sequence of nested partitions of the data –- progressively more granular:
+    \begin{itemize}
+  \item Start from one cluster containing all data points ($k=1$)
+  \item At each iteration: 
+    \begin{itemize}
+  \item Find the largest cluster (in terms of its diameter -- i.e., the one with largest dissimilarity between any two of its observations)
+  \item Split it
+  \item Update the cluster list
+  \end{itemize}
+  \item Iterate until all data points belong to a separate cluster (i.e., each point is its own cluster, so $k=n$)
+  \end{itemize}
+  
+  To perform the Divisive Hierarchical Clustering we can use the \textbf{diana} function.
+```{r}
+  help(diana)
+```
+  
+  The function requires:
+    \begin{itemize}
+  \item $\boldsymbol{x}$: data matrix or data frame, or dissimilarity matrix 
+  \end{itemize}
+  
+  Using the previously computed \verb|eu_iris| (i.e., the dissimilarity matrix for Iris data based on Euclidean distances):
+```{r}
+  hc_diana <- diana(eu_iris)
+  str(hc_diana)
+  class(hc_diana)       # notice its difference from class(hc_centroid) etc.
+  head(hc_diana$merge)
+  hc_centroid
+```
+  
+  To plot and cut the dendrogram we can use 
+```{r}
+  fviz_dend(hc_diana, as.ggplot = TRUE, 
+            show_labels = FALSE, main='Euclidean-Complete') # plot the dendrogram
+  
+  cluster_diana <- cutree(hc_diana, k=3)                    # cut by k (with height? Error)
+  cluster_diana
+  
+  cluster_diana <- cutree(as.hclust(hc_diana), h=5.5)       # cut by height (NOTE: convert it)
+  cluster_diana
+  
+  pairs(iris4, col=cluster_diana)                           # pairwise scatterplot with clusters
+```
+  
+  \section{$k$-means Clustering}
+  
+  $k$-means clustering is a partitioning algorithm that splits the data into $k$ clusters by iteratively computing centroids/moving data points until convergence. Because the K-means algorithm finds a local optimum, the results obtained depend on the initial random cluster assignment.
+  To perform the $k$-means clustering we can use the function \textbf{kmeans}.
+  
+```{r}
+  help(kmeans)
+```
+  
+  We can see that the function requires:
+    \begin{itemize}
+  \item $\boldsymbol{x}$: numeric matrix of data
+  \item \textbf{centers}: either the number of clusters, say $k$, or a set of initial (distinct) cluster centres. 
+  If a number, a random set of (distinct) rows in $x$ is chosen as the initial centres.
+  \end{itemize}
+  
+  Using the Iris data set \textbf{iris4}, for $k=3$:
+```{r}
+  res <- kmeans(iris4, 3)
+  str(res)
+```
+  
+  The clusters are stored in \verb|res$cluster|:
+```{r}
+  res$cluster
+  pairs(iris4, col=res$cluster) # pairwise scatterplot with clusters
+```
+  
+  \section{Hierarchical Clustering and $k$-means with one single command}
+  
+  Using the function \textbf{eclust} (in \textbf{factoextra}) it is possible to perform both methods. 
+  Its advantages include:
+    \begin{itemize}
+  \item It requires a single function call (instead of using two different command, packages, etc.)
+  \item Automatically computes the ``gap statistics'' to estimate the number of clusters
+  \item It provides silhouette information for all partitioning methods and hierarchical clustering
+  \item It draws beautiful and sexy graphs using \textbf{ggplot2}
+  \end{itemize}
+  
+  Let's compute Agglomerative Hierarchical Clustering using \textbf{eclust}.
+```{r}
+hc_res <- eclust(iris4,                        # data
+                 "hclust",                     # method
+                 k = 3,                        # num. of clusters
+                 hc_metric = "euclidean",      # distance measure
+                 hc_method = "single")         # linkage function
+str(hc_res)
+hc_res$cluster
+fviz_dend(hc_res, as.ggplot = TRUE, 
+          show_labels = FALSE, 
+          main='Euclidean-Single with eclust') # plot the dendrogram
+```
+
+Let's compute $k$-means using eclust.
+  You can notice that the clusters are represented in a 2D scatterplot based on the first two Principal Components (NOTE: wait/see the next lesson).
+```{r}
+  # it receives data, algorithm, k, distance to compute
+  km_res <- eclust(iris4, "kmeans", k = 3, hc_metric = "euclidean") 
+  km_res$cluster
+```
+  
+  \section{Evaluating a Clustering Solution}
+  
+  
+  Besides dendrogram cut by height (shorter cut means smaller and more compact clusters), or final value of the total within cluster sum of squares (\textbf{tot.withinss} for $k$-means), a clustering can be evaluated through \textit{Silhouette widths}.
+  
+  We can use the \textbf{silhouette} command.
+```{r}
+  help(silhouette)
+```
+  
+  We can see that the function requires:
+    \begin{itemize}
+  \item $\boldsymbol{x}$: an integer vector with $k$ different integer cluster codes (with $2 \leq k \leq n-1$)
+  \item \textbf{dist}: a dissimilarity object 
+  \end{itemize}
+  
+  It returns \textit{``an object, $sil$, of class silhouette which is an $n \times 3$ matrix with attributes. 
+    For each observation $i$, $sil[i,]$ contains the cluster to which $i$ belongs as well as the neighbor cluster of $i$ (the cluster, not containing $i$, for which the average dissimilarity between its observations and $i$ is minimal), and the silhouette width $s(i)$ of the observation.''}
+  
+  \textit{Remark}: points with a large $s(i)$ (approaching 1) are very well clustered. 
+  The ones with small $s(i)$ (close to 0) lie between two clusters.
+  Observations with negative $s(i)$ (approaching -1) are probably placed in the wrong cluster.
+  
+  Let's run the \textbf{silhouette} command based on $k$-means partition.
+```{r}
+distance <- dist(iris4, method="euclidean")
+sil <- silhouette(x = res$cluster, dist = distance)
+sil[1:5,] # showing the first 5 results
+```
+
+To get a Silhouette plot we will use the \textbf{factoextra} environment.
+```{r}
+fviz_silhouette(sil)
+```
+
+\section{Approaches to determine the number of clusters in a data set}
+
+We can determine the number of clusters in a data set using different strategies:
+\begin{itemize}
+  \item Within cluster dissimilarity/distance (\textbf{tot.withinss})
+  \item Hartigan Index
+  \item Average Silhouette
+\end{itemize}
+
+\subsection{Within cluster dissimilarity/distance}
+
+\begin{itemize}
+  \item \textbf{Hierarchical:} Dissimilarity levels (heights) at which clusters are formed
+  \item \textbf{$\boldsymbol{k}$-means:} Within clusters sum of squares (it is guaranteed to be a local minimum for any given random initialization)
+\end{itemize}
+
+We can use  \textbf{fviz-nbclust}, and use the \textit{elbow method} (look at the knee).
+
+For the Agglomerative Hierarchical Clustering:
+```{r}
+fviz_nbclust(iris4, hcut, method = "wss") +
+  geom_vline(xintercept = 3, linetype = 2)
+```
+
+For the $k$-means
+```{r}
+fviz_nbclust(iris4, kmeans, method = "wss") +
+  geom_vline(xintercept = 3, linetype = 2)
+```
+
+
+\subsection{Hartigan Index}
+
+
+It measures the relative change of fitness as the number of clusters changes.
+\textit{Remark}: only the data we want to cluster are needed.
+
+
+We can use the function \textbf{NbClust} (from the \textbf{NbClust} package).
+
+For Agglomerative Hierarchical Clustering:
+```{r}
+harAHC <- NbClust(iris4,  distance = "euclidean", method = "complete", index='hartigan')
+plot(harAHC$All.index, type = "l") 
+abline(v=harAHC$Best.nc[1], col="blue", lty=2)
+```
+
+For $k$-means:
+```{r}
+harKM <- NbClust(iris4,  distance = "euclidean", method = "kmeans", index='hartigan')
+plot(harKM$All.index, type = "l") 
+abline(v=harKM$Best.nc[1], col="blue", lty=2)
+```
+
+
+\textit{Remark}: using \textbf{index='all'}, the same function provides 30 indices for determining the number of clusters and proposes to user the best clustering scheme from the different results obtained by varying all combinations of number of clusters.
+The same holds for distance measures, clustering methods, etc.
+```{r}
+help(NbClust)
+allKM <- NbClust(iris4,  distance = "euclidean", method = "kmeans", index='all')
+```
+
+\subsection{Average Silhouette}
+
+We can use \textbf{fviz-nbclust}.
+
+For $k$-means:
+```{r}
+# Silhouette method
+fviz_nbclust(iris4, kmeans, method = "silhouette")+
+  labs(subtitle = "Silhouette method k-means")
+```
+
+
+For Agglomerative Hierarchical Clustering:
+```{r}
+# Silhouette method
+fviz_nbclust(iris4, hcut, method = "silhouette")+
+  labs(subtitle = "Silhouette method AHC")
+```
+
+
+\section{Clustering: Further topics}
+
+Model-based clustering based on finite Gaussian mixture models can be performed using the \textbf{Mclust} library through the \textbf{Mclust} command. 
+Here models are estimated by an EM algorithm initialized by hierarchical model-based agglomerative clustering. 
+The optimal model is then selected according to a Bayesian Information Criterion.
+
+The command \textbf{adjustedRandIndex} computing the \textit{adjusted Rand Index} is in the same library.
+
+Another library that can be used is \textbf{clusterR}. 
+
+\subsection{Generating GMM}
+
+Generating Gaussian mixtures is non-trivial and requires a certain number of choices, such as the (average and maximum) overlap across groups, the sphericity (diagonal vs non-diagonal covariance structure), homogeneity (equal covariance across groups), etc.
+
+Fortunately, we can use the \textbf{MixSim} package for this task.
+```{r}
+
+set.seed(1)       # fix the results (there is plenty of randomness)
+
+require(MixSim)   # laod the package
+help(MixSim)
+
+k <- 3            # num. of groups
+p <- 2            # dimensionality
+hom <- T          # equal covariances
+sph <- T          # spherical components
+MaxOmega <- 0.001 # maximum degree of overlap
+
+# generate the finite mixture model with Gaussian components
+A <- MixSim(MaxOmega = MaxOmega, K = k, p = p, sph = sph, hom=hom)
+
+# simulate the dataset
+n <- 100          # sample size
+alpha <- 0.01     # outliers
+x <- simdataset(n, A$Pi, A$Mu, A$S, n.noise = 0, n.out = 0, alpha = alpha)  
+
+# rename stuff
+colnames(x$X) = c("X1", "X2")
+id = x$id         # unit labels
+x = x$X           # n times p data points
+plot(x, col=id)
+```
+
+
+Here $k$-means assumptions are fully satisfied and does a great job.
+```{r}
+# Silhouette method
+kmsol <- fviz_nbclust(x, kmeans, method = "silhouette")+
+  labs(subtitle = "Silhouette method k-means")
+plot(kmsol)
+# plot the solution
+res <- kmeans(x, 3)
+plot(x, col=res$cluster) # pairwise scatterplot colored in clusters
+
+```
+
+
+\subsection{Contaminated data}
+
+What if the data contain some spurious observations? 
+Let's see what happens with some additional random noise.
+```{r}
+  
+  set.seed(1)
+  
+  # simulate the dataset
+  n <- 100        # sample size
+  numout <- 50    # num of outliers
+  x <- simdataset(n, A$Pi, A$Mu, A$S, n.noise = 0,
+                  n.out=numout, int=c(-0.5, 1.5))
+  
+  colnames(x$X) = c("X1", "X2")
+  id = x$id       # unit labels
+  x = x$X         # n times p data points
+  plot(x, col=id, main="GMM with noise")
+  points(x[id==0, ], pch="+", col = "blue")
+  
+```
+  
+  Noisy data break down $k$-means, and we see that the estimated number of groups is largely inflated.
+```{r}
+  # Silhouette method
+  kmsol <- fviz_nbclust(x, kmeans, method = "silhouette")+
+    labs(subtitle = "Silhouette method k-means")
+  plot(kmsol)
+  
+  # plot the "optimal" solution
+  res <- kmeans(x, 10)
+  plot(x, col=res$cluster, 
+       main="k-means 'optimal' solution") # pairwise scatterplot with clusters
+  
+  # original estimate of k
+  res <- kmeans(x, 3)
+  plot(x, col=res$cluster, 
+       main="k-means solution with k=3") # pairwise scatterplot with clusters
+  
+  
+  
+```
+  
+  
+  \textit{Remark:} Noisy observations can be modeled as part of the mixture; \textbf{Mclust} can do this.
+  
+  However, let's try a more "agnostic" approach.
+\textit{Trimmed $k$-means} (available through the package \textbf{trimcluster}) is a "robust" counterpart of $k$-means.
+It excludes a fraction $h/n$ of points that contribute the most to its objective function (i.e. the most aberrant points)and so encompasses $k$-means as a special case (i.e. no trimming for $h=0$).
+
+\textit{Remark}: It is a combinatorial optimization problem, but this package uses an heuritic algorithm that guarantees to achieve a local optimum.
+```{r}
+# install.packages('trimcluster')
+library('trimcluster')
+k = 3                           # num. of groups
+trimProp = numout/(n+numout)    # trimming propotion (i.e., h/n)
+tkm <- trimkmeans(x, k=k, trim=trimProp)
+
+# assign the estimated labels for outliers and non-outlying cases
+out <- tkm$classification == k+1
+nonout <- tkm$classification != k+1
+
+# plot the solution
+plot(x[nonout, ], col = tkm$classification[nonout], 
+     main="trimmed k-means with k=3 retrieves the uncontaminated model",
+     xlim = c(min(x[,1]), max(x[,1])),
+     ylim = c(min(x[,2]), max(x[,2])))
+points(x[out, ], col = "blue", pch="+")
+
+# Note: also here clustering evaluation can be performed in several ways
+# (i.e., we do not need to know that k=3 in this example)
+
+```
+
+options(tinytex.verbose = TRUE)
+
+\textit{Extension to elliptical components:} 
+\textbf{tclust} generalizes Mclust through an additional trimming proportion.
+Unlike trimmed $k$-means, this is very effective also in the presence of non-homogeneous and/or non-spherical components with unequal number of points.
+Check the \textbf{tclust} package if interested.
+

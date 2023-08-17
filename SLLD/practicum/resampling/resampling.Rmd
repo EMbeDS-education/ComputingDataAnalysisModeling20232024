@@ -1,0 +1,367 @@
+---
+title: "*Resampling*"
+author: "S.Tonini, F. Chiaromonte (special thanks to J. Di Iorio and L. Insolia)"
+date: "March 2th 2023"
+output:
+  pdf_document:
+    toc: true
+  html_document: default
+urlcolor: blue
+---
+
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) # just to clean the pdf files, not recommended in practice!
+```
+
+
+\section{Introduction}
+
+\subsection{Libraries}
+
+We are going to use:
+\begin{itemize}
+  \item \textbf{boot}: \textit{Bootstrap Functions}
+  \item \textbf{coin}: \textit{Conditional Inference Procedures in a Permutation Test Framework}
+  \item \textbf{ggplot2}: \textit{Create Elegant Data Visualisations Using the Grammar of Graphics}
+\end{itemize}
+
+```{r}
+library(tidyverse)  # data manipulation and visualization
+library(boot)       # bootstrapping
+library(coin)       # permutation tests
+library(ggplot2)    # plots
+```
+
+\subsection{Data}
+
+Today we will simulate our dataset! :)
+
+
+\section{Bootstrapping}
+
+There are two different ways of obtaining and evaluating bootstrap estimates: 
+\begin{enumerate}
+  \item non-parametric;
+  \item parametric;
+\end{enumerate}
+
+\textit{- Goal:} we have a set of $n$ observations from which we are able to calculate a statistic of interest $\theta$, but we have no formula to estimate its standard error. The latter may be useful to construct confidence intervals as well (e.g. ordinary 2-tailed $95\%$).
+
+
+\subsection{Non-parametric Bootstrapping}
+
+\textit{- Why non-parametric?} We often cannot reasonably assume that our sample is drawn from a known frequency distribution, but we can assume that it adequately reflects the underlying population from which it was drawn.
+
+\subsubsection{By hand}
+
+We generate a sample from a binomial distribution with parameters $(15,0.71)$.
+```{r}
+set.seed(123)
+x <- rbinom(n=30,       # sample size
+            size=15,    # num. of trials
+            prob=0.71)  # prob. of success per trial
+x
+
+n <- length(x)
+n
+
+summary(x)
+
+```
+
+Let's pretend that we do not know the true underlying distribution. 
+
+Our goal is to estimate the 90th percentile, and we rely on \textbf{non-parametric bootstrapping}.
+```{r}
+
+help(sample)
+
+set.seed(123)
+
+# number of bootstrap samples
+B <- 2000 
+
+# initialize an empty "container" for each of these
+bootstrapsample <- matrix(NA, 
+                         nrow = n, 
+                         ncol = B)
+dim(bootstrapsample)
+bootstrapsample[1:3, 1:3]
+
+for(i in 1:B){
+  # assign (column-wise) B draws with replacement
+  bootstrapsample[, i] <- sample(x,n,replace=TRUE)
+}
+
+summary(bootstrapsample[, 1:3])
+
+```
+
+Now we can compute our statistic of interest on each of these 2000 samples -- producing $B$ bootstrap values. 
+
+In our case, the statistic we are interested in is the 90th percentile.
+```{r}
+
+# to apply some function column-wise
+help(apply)
+# function of interest
+help(quantile)
+
+B_values <- apply(bootstrapsample,   # data
+                  2,                 # dimension (i.e. column-wise)
+                  quantile,          # function to apply
+                  probs=0.9)          # input for the function
+head(B_values)
+```
+
+So we have the following point estimate and its standard error:
+```{r}
+
+results <- data.frame("mean" = mean(B_values), 
+                      "SD" = sd(B_values))
+rownames(results) <- "Manual"
+
+results
+
+```
+
+\subsubsection{Using the boot package}
+
+We can automatically perform non-parametric bootstrapping using the \textbf{boot} package. 
+The main bootstrapping function is boot() and has the following syntax:
+```{r}
+help(boot)
+```
+
+\begin{enumerate}
+  \item \textbf{data:} The data as a vector, matrix or data frame. If it is a matrix or data frame then each row is considered as one multivariate observation;
+  \item \textbf{statistic:} A function which when applied to data returns a vector containing the statistic(s) of interest. [...] The first argument passed will always be the original data. The second will be a vector of indices, frequencies or weights which define the bootstrap sample;
+  \item \textbf{R:}	The number of bootstrap replicates;
+\end{enumerate}
+
+\textit{Remark:} it is mandatory to pass a"user-defined function" in the field \textbf{statistic}. 
+
+In the case of the 90th percentile, our estimation function is:
+```{r}
+# x: vector
+# d: set of indexes
+# prob: quantile
+sampleperc <- function(x, d, prob=0.9) {
+  return(quantile(x[d], probs=prob))
+}
+```
+
+The estimation function (that we wrote on top, and has to be so) comprises data $x$ and a vector of indexes $d$. 
+This function will be called many times, one for each bootstrap replication. 
+Every time, the data $x$ will be the same, and only the bootstrap sample indexed by $d$ will change.
+
+Once we have written a function like this, here is how we obtain bootstrap estimates of the standard error for the 90th percentile of the distribution:
+```{r}
+
+set.seed(123)
+
+b = boot(x, sampleperc, R=2000)
+print(b)
+
+# notice how close this is to our previous computation
+results <- rbind.data.frame(results, 
+                            data.frame("mean" = b$t0,   # mean(b$t)
+                                       "SD" = sd(b$t))) # for some reason you must compute it again
+rownames(results)[2] <- "boot"
+results
+
+# bias calculation
+mean(b$t)-b$t0
+
+
+```
+
+It is also easy to get a confidence interval (but be careful) using the function \textbf{boot.ci} that requires an object of class "boot" (i.e. computed using \textbf{boot}). 
+
+This function generates (by default) 5 different types of equi-tailed two-sided nonparametric confidence intervals. 
+These are:
+\begin{itemize}
+  \item  first order normal approximation: uses the standard deviation for calculation of CI. Use when statistic is unbiased. Is normally distributed.
+  
+  \item basic bootstrap interval: uses percentile to calculate upper and lower limit of test statistic. Use when statistic is unbiased and homoscedastic. The bootstrap statistic can be transformed to a standard normal distribution
+  
+  \item studentized bootstrap interval (bootstrap variance needed): resamples the bootstrap sample to find a second-stage bootstrap statistic and use it to calculate the CI. Use when statistic is homoscedastic. The standard error of bootstrap statistic can be estimated by second-stage resampling.
+ 
+  \item  bootstrap percentile interval: uses quantiles eg 2.5\%, 5\% etc. to calculate the CI. Use when statistic is unbiased and homoscedastic. The standard error of your bootstrap statistic and sample statistics are the same.
+  
+  \item adjusted bootstrap percentile (BCa) interval: uses percentile limits with bias correction and estimate acceleration coefficient corrects the limit and find the CI. The bootstrap statistic can be transformed to a normal distribution. The normal-transformed statistic has a constant bias. 
+
+\end{itemize}
+
+```{r}
+help(boot.ci)
+boot.ci(b, conf=0.95)
+```
+
+\subsection{Parametric Bootstrapping}
+
+\textit{- Why parametric?} It is very useful when we can reasonably assume that our sample follows a known distribution.
+
+\subsubsection{By hand}
+We have a sample of size $n=30$ from a binomial distribution with parameters $(N=15, p=0.71)$.
+```{r}
+set.seed(123)
+
+n = 30
+N <- 15
+x <- rbinom(n = n, size = N, prob = 0.71)
+x
+
+```
+
+Let's assume that we know the underlying distribution, where the actual parameter $p$ is unknown, and we want to estimate the 90th percentile as before. 
+
+Based on MLE: ($\hat{p}=\frac{\sum_{i=1}^{n}x_i}{nN}$)
+```{r}
+
+p_hat <- mean(x)/N
+p_hat
+
+```
+
+We use parametric bootstrap and compute $B$ samples of size  $n$ from the known distribution.
+```{r}
+
+B <- 2000       # number of bootstrap samples
+tempdata <- rbinom(B*n, 
+                   size = N, 
+                   prob = p_hat)
+
+bootstrapsample <- matrix(tempdata, nrow = n, ncol = B)
+dim(bootstrapsample)
+bootstrapsample[, 1:5]
+
+
+```
+
+Now we can compute the statistic of interest on each of these 2000 samples -- producing $B$ bootstrap values. 
+
+In our case, we are interested in the 90th percentile.
+```{r}
+B_values <- apply(bootstrapsample, 2, quantile, prob=0.9)
+head(B_values)
+summary(B_values)
+
+```
+
+So we have the following estimate and standard error:
+```{r}
+
+resultsParam <- data.frame("mean" = mean(B_values), 
+                      "SD" = sd(B_values))
+rownames(resultsParam) <- "Manual_Parametric"
+resultsParam
+
+```
+
+
+Let's compare it with the \textbf{boot} function:
+```{r}
+
+set.seed(123)
+
+B = 2000
+
+p.rg <- function(data, mle, N=15) {
+    out <- rbinom(length(data), 
+                     size = N, 
+                     prob = mle)
+    out
+}
+
+
+bBoot <- boot(x, sampleperc, R = B, sim = "parametric",
+                 ran.gen = p.rg, mle = (mean(x)/N))
+bBoot
+
+
+# notice how close this is to our previous computation
+resultsParam <- rbind.data.frame(resultsParam, 
+                            data.frame("mean" = bBoot$t0,   # mean(b$t)
+                                       "SD" = sd(bBoot$t))) # for some reason you must compute it again
+rownames(resultsParam)[2] <- "boot_Parametric"
+resultsParam
+
+```
+
+
+\section{Permutation Test}
+
+Permutation tests are particularly relevant in experimental studies, where we are often interested in the sharp null hypothesis of no difference between treatment groups.
+
+Let's generate a dataset divided into treatment (1) and control group (0).
+```{r}
+
+# they habe a difference in mean equal to 1
+set.seed(1)
+n <- 100
+tr <- rbinom(n, 1, 0.5) 
+y <- 1 + tr + rnorm(n, 0, 3)
+
+```
+
+Let us compute the difference in mean between the two groups.
+The difference in means is, as we would expect (since we made it up), about 1:
+```{r}
+
+means <- by(y, tr, mean)
+diff0 <- diff(means)
+diff0
+
+```
+
+To obtain a single permutation of the data, we simply resample without replacement and calculate the difference again:
+```{r}
+s <- sample(tr, length(tr), FALSE)  # shuffle the labels
+by(y, s, mean)                      # compute mean in vector y according to class s
+
+diff(by(y, s, mean))                # difference between 2 means
+```
+
+If we repeat this process a large number of times, we can build our approximate permutation distribution (i.e., the sampling distribution for the mean-difference). 
+
+We'll use \textbf{replicate} to repeat our permutation process. The result will be a vector of the differences from each permutation (i.e., our distribution):
+```{r}
+set.seed(123)
+
+nperm = 2000
+# nperm = 200  # try this too :)
+# nperm = 5000
+dist <- replicate(nperm, diff(by(y, sample(tr, length(tr), FALSE), mean)))
+head(dist)
+
+```
+ 
+We can look at our distribution using an histogram indicating with a vertical line the observed difference:
+```{r}
+hist(dist, xlim = c(-3, 3), col = "grey", breaks = 100)
+abline(v = diff(by(y, tr, mean)), col = "blue", lwd = 2)
+```
+
+Now, we can use the distribution to obtain a $p$-value for our mean-difference by counting how many permuted mean-differences are larger than the one we observed in our actual data. We can then divide this by the number of items in our permutation distribution (i.e., nperm=2000 from our call to replicate, above):
+```{r}
+sum(dist > diff0)/nperm             # one-tailed test
+sum(abs(dist) > abs(diff0))/nperm   # two-tailed test
+```
+
+\subsection{Permutation Test with coin}
+
+Even if we implemented our own permutation distributions, R provides a package to conduct permutation tests called \textbf{coin}. 
+We can compare our result from above with the result from \textbf{coin}:
+```{r}
+# library(coin)
+independence_test(y ~ tr, alternative = "greater")  # one-tailed
+independence_test(y ~ tr)                           # two-tailed (default)
+```
+
+Almost anything that you can address in a parametric framework can also be done in a permutation framework otherwise you can create your own permutation test!

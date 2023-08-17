@@ -1,0 +1,53 @@
+\ProvidesPackage{beamerouterthemechspinfolines}
+
+% Copyright 2003 by Christoph Sprenger <christoph.sprenger@inf.ethz.ch>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+
+\mode<presentation>
+
+
+\defbeamertemplate*{footline}{chspinfolines theme}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,left]{}%
+    \usebeamerfont{author in head/foot}\hspace*{2ex}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{}%
+    \usebeamerfont{date in head/foot}\insertshortdate
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{}%
+    \insertframenumber{} of \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\defbeamertemplate*{headline}{chspinfolines theme}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,left]{}%
+    \usebeamerfont{section in head/foot}\hspace*{2ex}\insertsectionhead
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.25ex,dp=1ex,right]{}%
+    \usebeamerfont{subsection in head/foot}\insertsubsectionhead\hspace*{2ex}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+
+% \setbeamertemplate{footline}{
+%   \insertshortauthor\hfill\insertshortdate\hfill\insertframenumber of \inserttotalframenumber
+% }
+
+%\setbeamertemplate{headline}{
+%  \insertsectionhead\hfill\insertsubsectionhead
+%}
+
+
+\setbeamersize{text margin left=2em,text margin right=2em}
+
+\mode
+<all>

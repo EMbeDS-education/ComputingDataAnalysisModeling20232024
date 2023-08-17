@@ -1,0 +1,105 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% LaTeX preamble for slides produced with beamer class
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% $Id: beamerconfig.sty 26952 2006-05-25 13:46:56Z csprenge $
+
+
+% page resizing and nup printing
+\usepackage{pgfpages}
+%\pgfpagesuselayout{resize to}[a4paper,landscape,border shrink=5mm]
+%\pgfpagesuselayout{4 on 1}[a4paper,landscape,border shrink=3mm]
+
+
+% beamer package configuration
+
+\usetheme{Zurich}
+\useoutertheme{chspinfolines}
+%%\useoutertheme{split}
+%%\useoutertheme{infolines}
+%%\useoutertheme[subsection=true]{miniframes}
+
+%\useinnertheme{default}
+
+%\usecolortheme{seahorse}
+\setbeamercolor{palette primary}{use=structure,fg=structure,bg=structure.fg!7!white}
+\setbeamercolor*{titlelike}{parent=palette primary}
+
+
+%% Comment this out, if you do not want the table of contents to pop up at
+%% the beginning of each section:
+
+% \AtBeginSection[]
+% {
+%   \begin{frame}              %<beamer>
+%     \frametitle{Outline}
+%     \tableofcontents[currentsection,hideothersubsections]
+%   \end{frame}
+% }
+
+% description item width
+%
+\setbeamersize{description width of={M}}
+
+
+% additional packages to use
+%\usepackage[pdftex]{hyperref}    % already loaded?!
+\hypersetup{
+  colorlinks=false,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue,
+%  pdfstartview=FitW
+%  pdfpagelayout=SinglePage
+}
+\renewcommand{\url}[1]{\href{#1}{#1}}
+
+%\usepackage{graphicx}
+%\usepackage{color}
+
+%\usepackage{listings}
+%\usepackage{lstisar}
+
+
+% (re)define colors
+
+\definecolor{red}{rgb}{0.8,0,0}                      % Text
+\definecolor{green}{rgb}{0,0.7,0}
+\definecolor{blue}{rgb}{0,0,1}
+
+\definecolor{yellow}{rgb}{1,0.86,0.2}
+\definecolor{magenta}{rgb}{0.9,0,0.9}
+\definecolor{orange}{rgb}{0.9,0.6,0}
+\definecolor{cyan}{rgb}{0.5,0.75,1}
+
+\definecolor{SaddleBrown}{rgb}{0.55,0.27,0.07}     % Page borders
+\definecolor{Blue2}{rgb}{0,0,0.93}
+\definecolor{Gold}{rgb}{1,0.84,0}
+\definecolor{MintCream}{rgb}{0.96,1,0.98}          % Page background
+\definecolor{NavyBlue}{rgb}{0,0,0.5}               % Title page
+\definecolor{Green3}{rgb}{0,0.8,0}
+\definecolor{DarkSlateGray}{rgb}{0.18,0.31,0.31}
+\definecolor{Purple2}{rgb}{0.57,0.17,0.93}
+
+\definecolor{they}{rgb}{1,.87,0}               % theory classes
+\definecolor{theb}{rgb}{.42,.46,1}
+\definecolor{theg}{rgb}{.56,.93,.37}
+\definecolor{theo}{rgb}{1,.53,0}
+
+
+\newcommand{\re}[1]{\textcolor{red}{#1}}
+\newcommand{\gr}[1]{\textcolor{green}{#1}}
+\newcommand{\bl}[1]{\textcolor{blue}{#1}}
+
+\newcommand{\mg}[1]{\textcolor{magenta}{#1}}
+\newcommand{\ye}[1]{\textcolor{yellow}{#1}}
+\newcommand{\cy}[1]{\textcolor{cyan}{#1}}
+
+\newcommand{\og}[1]{\textcolor{orange}{#1}}
+
+\newcommand{\thy}[1]{\textcolor{they}{#1}}
+\newcommand{\thb}[1]{\textcolor{theb}{#1}}
+\newcommand{\thg}[1]{\textcolor{theg}{#1}}
+\newcommand{\tho}[1]{\textcolor{theo}{#1}}

@@ -1,0 +1,605 @@
+%\documentclass[handout]{beamer}%no animations
+\documentclass{beamer}%with animations
+\synctex=1
+\input{macros}
+
+
+
+
+\title{PDAI\\ Programming \& Data Analytics \& AI \\ Module 1
+%{\color{red} Lecturer:\\ %\underline{Alberto Lluch Lafuente} \& 
+%Andrea Vandin a.vandin@santannapisa.it
+%\\
+%Teaching Assistant:\\
+%Daniele Licari d.licari@santannapisa.it
+%}
+}
+\subtitle{Lecture 1: Course Introduction}
+\date{%Feb 1, 2016
+}
+
+\begin{document}
+
+\frame{\titlepage}
+\author{Andrea Vandin}
+
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+\section{Course introduction}
+
+\begin{frame}{Note on the 2-modules structure}
+	\begin{block}{2-modules structure: \myurl{\homepage}}
+		As you know, this course is the first module of a teaching unit of two modules. Intuitively
+		\begin{itemize}
+			\item M1: Module 1 focuses on programming
+			\item M2: Module 2 focuses  on data analysis and machine learning
+		\end{itemize}
+		Students can attend single modules. \\ M1 gives the necessary background for M2
+		\begin{center}\textbf{These slides focus on M1}\end{center}
+	\end{block}	
+\pause
+	\begin{block}{Previous edition, A.Y. 2019/2020}
+		M1 is a re-edition of course \textbf{Introduction to Programming in Python} held by us 
+		for the Allievi Ordinari of SSSA
+		\begin{itemize}
+			\item If you have attended it, and plan to attend M2, you can skip to it
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Note on the 2-modules structure}
+	\begin{block}{2-modules structure: \myurl{\homepage}}
+		As you know, this course is the first module of a teaching unit of two modules. Intuitively
+		\begin{itemize}
+			\item M1: Module 1 focuses on programming
+			\item M2: Module 2 focuses  on data analysis and machine learning
+		\end{itemize}
+		Students can attend single modules. \\ M1 gives the necessary background for M2
+		\begin{center}\textbf{These slides focus on M1}\end{center}
+	\end{block}	
+	\begin{block}{Previous edition, A.Y. 2020/2021}
+		M1 is a re-edition of \textbf{Intro to Programming \& Data Processing 1}
+		\begin{itemize}
+			\item If you have attended it, and plan to attend M2, you can skip to it
+		\end{itemize}
+		As suggested by your colleagues, \textbf{this year M2 has twice the hours}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Note on the 2-modules structure}
+	\begin{block}{2-modules structure: \myurl{\homepage}}
+		As you know, this course is the first module of a teaching unit of two modules. Intuitively
+		\begin{itemize}
+			\item M1: Module 1 focuses on programming
+			\item M2: Module 2 focuses  on data analysis and machine learning
+		\end{itemize}
+		Students can attend single modules. \\ M1 gives the necessary background for M2
+		\begin{center}\textbf{These slides focus on M1}\end{center}
+	\end{block}	
+	\begin{block}{Previous edition, A.Y. 2021/2022}
+		M1 is a re-edition of \textbf{Programming and Data Analytics 1}
+		\begin{itemize}
+			\item If you have attended it, and plan to attend M2, you can skip to it
+		\end{itemize}
+		As suggested by your colleagues, \textbf{this year M2 has twice the hours}
+	\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Course Responsible}
+ \begin{itemize}
+   \item Course responsible: Andrea Vandin
+	\begin{itemize}
+      \item\href{mailto:andrea.vandin@santannapisa.it}{\color{blue}andrea.vandin@santannapisa.it}
+	  \item Tenure-track Assistant Professor in Computer Science at Institute of Economics \& EMbeDS @ SSSA, Adjunct Associate Professor at DTU Technical University of Denamrk
+	  \item Former Associate Professor in Computer Science at DTU
+	  \begin{itemize}
+      \item 
+	   {\scriptsize \emph{Programming in C++ for non-computer scientists}, 250 students}
+%	  \item Assistant Professor at IMT School for Advanced Studies Lucca
+%	  \item Senior Research Assistant University of Southampton, UK
+	  \end{itemize}
+	%\myurl{mailto:a.vandin@santannapisa.it}
+    \end{itemize}
+      \item Co-lecturer: Daniele Licari [Informally]
+	\begin{itemize}
+	\item \href{mailto:daniele.licari@santannapisa.it}{\color{blue}daniele.licari@santannapisa.it}
+	\item EMbeDS Chief Data Engineer
+	\item Great academic \& industrial experience in Python, data analysis, machine learning, natural language processing, \ldots
+	\end{itemize}
+      \item Teaching Assistant: Sima Sarv Ahrabi
+\begin{itemize}
+	\item \href{mailto:Sima.SarvAhrabi@santannapisa.it}{\color{blue}Sima.SarvAhrabi@santannapisa.it}
+	\item EMbeDS Data Scientist (Python,  machine learning \ldots)
+\end{itemize}
+
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Related courses}
+	We also teach related courses to two more Schools of Excellence:
+		\begin{itemize}
+			\item PhD students of Scuola Superiore Normale, Pisa
+			\item PhD Students in Computer Science of Gran Sasso Science Institute, L'Aquila
+		\end{itemize}
+\end{frame}
+
+\include{references}
+
+\begin{frame}{Course Description - M1}
+\begin{block}{This module will }
+Introduce students to the fundamental principles of structured programming, with applications to data processing and analysis. 
+\begin{itemize}
+	\item It starts from basic notions of programming (data types, collections, control structures, functions \& modules, OOP),
+	\item Progresses to data processing functionalities (loading, manipulation, and visualization of CSV data).
+\end{itemize}
+\end{block}
+
+\pause
+
+\begin{block}{A student who has met the objectives of the course will}
+ acquire an understanding of the issues involved in computer programming, to be able to make informed decisions. The student will be able to write simple to medium python programs of various nature, including those for reading, manipulating and visualizing data. % for computing and presenting statistics of interest. % using popular Python libraries.
+\end{block}
+\end{frame}
+
+\begin{frame}{Learning Objectives}
+
+
+A student who has met the objectives of the course will be able to:
+\begin{itemize}
+{\footnotesize
+\item select and use the correct data types and collections for the problem at hand
+\item use and describe variables, operations, and control structures (if, loops)
+%\item use variables and operations
+%\item use and describe control and repetition strctures (if, loops)
+%\item use and describe collections (lists, \ldots) %(lists, tuples, dictionaries)
+% and iterators
+\item create and use functions and classes %, including recursive ones%\item define and construct data structures and functions, including recursive, dynamic data structures and recursive functions
+%\item construct and demonstrate generic functions and classes (templates)
+%\item create and use  classes with encapsulation and inheritance
+%\item use pointers and arrays with memory management
+%\item develop projects organized in multiple header and source files
+\item use libraries for I/O, data manipulation, and data visualization
+%\item analyze and compare the complexity of different data structures and algorithms
+%\item explain the C++ runtime system
+\item use principles of structured program design and methods
+%\item explain and apply the principles of abstract data types
+\item discuss Python-related issues in a clear and concise way, possibly using on-line platforms
+}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Evaluation}
+
+  %To pass you need to do the mandatory exercises and pass the exam:
+  \begin{itemize}
+  \item Regular coding assignments
+    \begin{itemize}
+    \item Available at \myurl{\homepage}
+    \begin{itemize}
+	\item Every class comes with a set of related assignments
+	\item We have built an online framework for automatically testing your code and getting hints
+    \item (Soft) deadlines: before the following class
+    \item We will try to allocate time at the end of classes to work on them
+    \item You will have to send to us your solutions before the exam
+	\end{itemize}
+	\item {\color{red}A fundamental learning tool of this course}
+    \end{itemize}
+%  \item Project---a little larger exercise (details below)
+  \item Oral Exam
+    \begin{itemize}
+	\item We will do an oral examination
+	    \begin{itemize}
+	   \item  starting from your solutions to the assignments 	
+	   \item {\color{red}Another reason for doing your assignments!}
+    	\end{itemize}
+    \item Date: TBD
+    %\item Duration, 4 hours,  all aid allowed 
+%  \item Evaluation
+%  \begin{itemize}
+%  \item Based on the oral examinaton
+%  \item Your work in the assignments will be used to adjust the final grade 
+%  \end{itemize}    
+  \end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Tentative Lecture Plan}
+  \centering
+  \input{lecture-plan}  
+\end{frame}
+
+\begin{frame}
+	\frametitle{Stats and Computing courses by EMbeDS}
+	\centering
+\begin{figure}
+	\includegraphics[width=0.95\linewidth]{../../tentativeSchedule.png}
+\end{figure} 
+\end{frame}
+
+
+
+%\begin{frame}
+%  \frametitle{Course Materials}
+%  
+%\begin{itemize}
+%\item Suggested book: M. Lutz, Learning Python.
+%\item Software
+%\begin{itemize}
+%\item Python: \myurl{https://www.python.org/}
+%\item Suggested Python editor: JupyterLab \myurl{https://jupyter.org/} 
+%%    \begin{itemize}
+%%    %\item PyCharm %\myurl{https://www.jetbrains.com/pycharm/}
+%%	\item JupyterLab \myurl{https://jupyter.org/} 
+%%    \end{itemize}
+% \end{itemize}
+%\item Setup your machine: 
+% \myurl{bit.ly/Intro2Python1920SSSA-setup}
+% \end{itemize}
+%\end{frame}
+
+
+\begin{frame}
+\frametitle{Further info}
+\begin{itemize}
+\item No previous experience on computer programming required
+\item Previous experience in writing small programs is advantageous
+%\item We might adjust the course level according to your expertise and feedback
+\pause
+\item You will never learn  programming if you don't practice it!
+\begin{itemize}
+\item \color{red}Therefore you have to regularly do all the assignments
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Ideas for an Effective Course} 
+\framesubtitle{Live Programming \& Assignments}
+We have blocks of 3 hours.
+\begin{itemize}
+\item First part: % (about 2 hours): 
+\\ Intro to new topics \& Live programming
+    \begin{itemize}
+    \item No slides
+    \item Iinteractive \emph{notebooks} mixing presentation material and code %during the lecture
+%    \item We may make small exercises together in the lecture
+      \begin{itemize}
+      \item Please have your laptop ready! \myurl{\homepagesetup}
+	  \item You find code in advance here %\myurl{\homepageslides}
+      \end{itemize}
+%	\item Test/consolidate your understanding with the assignments
+%      \begin{itemize}
+%      \item {\red Assignments are a fundamental learning tool for this course!}
+%      \end{itemize}
+    \end{itemize}
+
+
+\item Second part: % (about 1 hour):
+\\ You consolidate your understanding working on the assignments
+\begin{itemize}
+\item Begin working on the assignments with our support if needed
+\item Complete them offline before next class. Contact us if needed
+\end{itemize}
+\end{itemize}
+\pause
+{\color{red}
+However, we have the ambitious goal of covering many topics necessary to introduce you to programming and data analytics in just 20 hours. Hence we might skip some second parts.
+}
+\end{frame}
+
+
+
+\include{live}
+
+%\begin{frame}{Live Programming}
+%\centering 
+%%\includegraphics[width=0.80\textwidth]{figs/live}
+%%\includegraphics[width=0.50\textwidth]{figs/liveCrop}
+%%\includegraphics[width=1.0\textwidth]{figures/helloWorld}
+%%\includegraphics[width=1.0\textwidth]{figures/HelloWorldAfter}
+%\includegraphics[width=1.0\textwidth]{figures/HelloWorldjupyterlab}
+%\end{frame}
+
+%\begin{frame}{Ideas for an Effective Course: CodeJudge}
+%  \begin{itemize}
+%  \item Exercises using \textit{CodeJudge}
+%    \begin{itemize}
+%    \item One needs to practice!
+%    \item Immediate feedback from \textit{CodeJudge} which tests your code
+%%    \item Demo and first exercises next week
+%    \end{itemize}
+%  \end{itemize}
+%\end{frame}
+
+%\begin{frame}{Repl.it}
+%\centering 
+%% \includegraphics[width=0.9\textwidth]{figures/repl}
+% \includegraphics[width=1.0\textwidth]{figures/replNew}
+%\begin{itemize}
+%\item First time visit:
+%\myurl{\replstudentsinvitation}
+%\item After that: \hspace{0.58cm} \myurl{\replstudents}
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}{Repl.it}
+%\centering 
+%\begin{itemize}
+%\item A Repl.it team is a collection of assignments with autograding functionalities
+%\item Your dashboard will be an ordered list of assignments. \\ You can see the status of your assignments
+%\item Our dashboard tells us the status of all your assignments
+%\end{itemize}
+%\end{frame}
+
+\begin{frame}{Assignments on Colab}
+	\centering 
+	% \includegraphics[width=0.9\textwidth]{figures/repl}
+	% \includegraphics[width=1.0\textwidth]{figures/replNew}
+	\includegraphics[width=0.78\textwidth]{figures/colab1}
+	\begin{itemize}
+		\item Each lecture comes with a set of simple coding assignments
+		\begin{itemize}
+			%\item Distributed using Colab
+			\item Links available in the wiki page for slides and further material
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Colab}
+	\centering 
+	\begin{itemize}
+		\item Colab is a Google service similar to Google docs 
+		\begin{itemize}
+			\item but for python notebooks.
+			\item no installation required
+		\end{itemize}	
+		\item Each set of assignments is actually a python notebook
+		\item We implemented in Colab autograding functionalities
+		\begin{itemize}
+			\item to test your solution
+		\end{itemize}	
+		%\item If you prefer, you can also download them as jupyter notebooks
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Colab: auto-testing}
+	\centering 
+	\includegraphics[width=0.67\textwidth]{figures/colab3b}
+\end{frame}
+
+\begin{frame}{Colab: auto-testing}
+	\centering 
+	\includegraphics[width=0.72\textwidth]{figures/colab2}
+\end{frame}
+
+
+\section{Sneak preview of Module 2}
+\begin{frame}{Outline}
+	\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{Sneak preview of Module 2}
+	\centering 
+	Starting from the competences developed in the first module, we will study
+	how to apply data analysis techniques from Machine learning
+%	\includegraphics[width=0.4\linewidth]{figures/whats_ml.jpg}
+	\includegraphics[width=0.4\linewidth]{figures/Breast-Biopsy-2.jpg}\\
+	\includegraphics[width=0.4\linewidth]{figures/fna-benign1.png}
+	\includegraphics[width=0.4\linewidth]{figures/fna-malignant1.png}\\
+	Can we classify them automatically?
+\end{frame}
+
+\begin{frame}{Sneak preview of Module 2}
+	We will go through a classic pipeline for these data analysis tasks
+\begin{itemize}
+	\item with emphasis on data pre-processing.
+	\end{itemize}		
+We will use two alternative approaches 
+	\begin{itemize}
+		\item Python: \textbf{main focus}
+		\item Knime: a graphical workflow language
+	\end{itemize}		
+\centering
+	\includegraphics[width=1.0\linewidth]{figures/knimepipeline.png}
+\end{frame}
+
+\begin{frame}{Sneak preview of Module 2}
+	\centering 
+	Further advanced research-oriented topics of data-driven analysis like Process Mining \\
+	
+	%	\includegraphics[width=0.4\linewidth]{figures/whats_ml.jpg}
+	\includegraphics[width=0.4\linewidth]{figures/lucy.png}
+	\includegraphics[width=0.4\linewidth]{figures/randy.png}\\
+		\textbf{What is the process underlying my data?}\footnote{Example from \url{https://pm4py.fit.fraunhofer.de/}}\\
+	\includegraphics[width=0.9\linewidth]{figures/simple_sample_model.png}
+	
+\end{frame}
+
+\begin{frame}{Sneak preview of Module 2}
+	\begin{block}{Evaluation}
+		You will do the same on data of interest or on data on titanic sinking
+	\begin{itemize}
+		\item Would you have survived the sinking of the titanic?
+	\end{itemize}
+\begin{itemize}
+	\item Alternatively: bring your own data of interest!
+\end{itemize}
+	\end{block}
+	
+\end{frame}
+
+\section{Let's Kahoot!}
+\begin{frame}{Outline}
+	\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{Let's play a game on Kahoot!}
+	\centering
+\includegraphics[width=0.8\linewidth]{figures/kahoot.jpg}
+	\begin{itemize}	
+	\item Using your smartphone or a second monitor
+	\item Visit	\myurl{www.kahoot.it}
+	\item Type the code we will give you during the class
+	\end{itemize}
+\end{frame}
+
+\section{Overview to programming}
+\begin{frame}{Outline}
+	\tableofcontents[currentsection]
+\end{frame}
+
+
+\begin{frame}{What is a program?}
+	\begin{itemize}
+		\item A sequence of code instructions to control a machine
+		\begin{itemize}
+			\item Input/output
+			\item Mathematical operations
+			\item Conditional and repetitive executions
+		\end{itemize}
+		\item A recipe to instruct a machine to execute instructions. 
+		\begin{itemize}
+			\item We can't use a \emph{natural language}. 
+			\item We need a \textbf{programming language}
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Programming languages}
+	\centering
+	\fbox{\includegraphics[width=0.45\textwidth]{figures/7mostDemanded2019}}
+	\fbox{\includegraphics[width=0.45\textwidth]{figures/20mostPopularFeb2019}}
+	{\scriptsize\myurl{http://www.codingdojo.com/blog/the-7-most-in-demand-programming-languages-of-2019}}
+\end{frame}
+
+\begin{frame}{Programming languages}
+	%	\centering
+	{\scriptsize\myurl{https://www.tiobe.com/tiobe-index/}}
+	\includegraphics[scale=0.35]{figures/tiobe02_2021}\\
+	\vspace{0.5cm}
+	\pause
+	\hspace{-0.34cm}\includegraphics[scale=0.28]{figures/tiobe05_2021}
+	\centering
+\end{frame}
+
+\begin{frame}{Programming languages}
+		\centering
+	{\scriptsize\myurl{https://www.tiobe.com/tiobe-index/}}
+	\includegraphics[scale=0.24]{figures/tiobe01_23.png}\\
+\end{frame}
+
+
+\begin{frame}{The Python Programming language}
+	\centering
+	%\begin{minipage}[t]{0.04\textwidth}
+	%\includegraphics[width=\textwidth]{figures/python-logo}
+	%\end{minipage}
+	\includegraphics[width=0.1\textwidth]{figures/python-logo}
+	
+	%Python is a programming language
+	\begin{itemize}
+		\item High-level: almost human readable. Abstracts from hardware
+		\item Beginner-friendly: 
+		\begin{itemize}
+			\item streamlined syntax
+			\item it is easy to write your \emph{first programs}
+		\end{itemize}	
+		\item Free, open-source and multi-platform
+		%\item Object-oriented: everything is an \emph{object}. This makes modularization easier. A powerful programming abstraction.
+		\item Developed since the 90s, therefore it has 
+		\begin{itemize}
+			\item A wide community, and its popularity keeps increasing
+			\item Many predefined software modules
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Python programs}
+	\begin{itemize}
+		\item A sequence of python instructions to control a machine
+		\item Python supports the most common programming styles
+		\begin{itemize}
+			\item Imperative: Statements are executed in sequence changing the state of the program (the variables)
+			\item Procedural: The program is structured in reusable units named functions
+			\item Object-oriented: The program is structured as a collection of interacting objects that send messages to each other.
+			\item {\color{gray}Functional: Statements are not written/executed as an ordered sequence of instructions. A computation is treated as the evaluation of a mathematical function.}
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{{Variables}}
+	\framesubtitle{Basic abstraction to represent units of data}
+	A variable has a name and a value
+	\begin{itemize}
+		\item Names can contain any letter, number, or the underscore \_
+		\\
+		%\begin{minipage}{0.4\textwidth}
+		%\includegraphics[width=1.0\textwidth]{figures/keywords2}
+		%\end{minipage}
+		\begin{minipage}{0.50\textwidth}
+			\includegraphics[width=1.0\textwidth]{figures/keywords}
+		\end{minipage}
+		\begin{minipage}{0.42\textwidth}
+			Note:
+			\begin{itemize}
+				\item Cannot start with numbers
+				\item Cannot be a  keyword
+				\item Names are case-sensitive
+			\end{itemize}
+		\end{minipage}
+		
+		\item We assign/update values to variables using assignment statements
+		%\begin{lstlisting}[language=python,basicstyle=\footnotesize\ttfamily,    stringstyle=\ttfamily\color{green}]
+		
+\begin{lstlisting}[language=python]
+month_number=3
+month_name="April"
+print("The number of",month_name,"is",month_number)
+month_number=4
+print("The number of",month_name,"is",month_number)
+\end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\include{live}
+
+\begin{frame}
+	\frametitle{Configure your machine}
+	\framesubtitle{If you have not done it yet}
+	\centering
+	Follow the instructions in\\
+	\myurl{\homepagesetup}
+\end{frame}
+
+\begin{frame}{``But it works \ldots''}
+	\centering 
+	\includegraphics[width=0.7\textwidth]{figures/itDoesTheJob.jpg}
+\end{frame}
+
+\begin{frame}{``Can You Learn To Ski Without Lessons?''}
+	\centering 
+	\includegraphics[width=0.7\textwidth]{figures/f737c96e-beginner-skier.jpg}
+	\\
+	{\scriptsize\myurl{https://www.skibro.com/blog/en/can-you-learn-to-ski-without-lessons/}}
+	\\
+	\vspace{0.2cm}
+	%\\
+	Most of the times you get to the valley. 
+	\\
+	\textbf{The problem is how you get there \ldots}
+\end{frame}
+
+%https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.skibro.com%2Fblog%2Fen%2Fcan-you-learn-to-ski-without-lessons%2F&psig=AOvVaw0ZUu9blkqLjpRQslcqpDFP&ust=1613575249998000&source=images&cd=vfe&ved=2ahUKEwizpIOu2u7uAhWD0-AKHcckD1AQjhx6BAgAEBI
+
+\end{document}

@@ -1,0 +1,56 @@
+\ProvidesPackage{beamerthemeZurich}
+
+% Copyright 2004 by Manuel Carro <mcarro@fi.upm.es>
+%
+% This program can be redistributed and/or modified under the terms
+% of the GNU Public License, version 2.
+%
+% adapted from Boadilla theme 
+% by Christoph Sprenger <christoph.sprenger@inf.ethz.ch>
+%
+% $Id: beamerthemeZurich.sty 240 2006-03-17 20:25:06Z csprenge $
+
+\mode<presentation>
+
+\setbeamertemplate{frametitle}[default][center]
+
+%\newif\ifbeamer@secheader
+%\beamer@secheaderfalse
+
+%\DeclareOptionBeamer{secheader}{\beamer@secheadertrue}
+%\ProcessOptionsBeamer
+
+\useoutertheme{default}
+
+\usecolortheme{rose}        % rose, lily
+\usecolortheme{dolphin}     % dolphin, seahorse
+
+\useinnertheme{circles}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
+% fonts
+\usefonttheme[onlylarge]{structurebold}
+%\usepackage{mathptm}      % also try: mathptmx, mathptm, mathtime
+
+% Tills' opinion: should be done in an inner theme, not here.
+\usenavigationsymbolstemplate{} 
+
+\useitemizeitemtemplate{%
+    \large\raise.5pt\hbox{%\color{beamerstructure}
+      $\bullet$}%
+}
+\usesubitemizeitemtemplate{%
+    \scriptsize\raise.5pt\hbox{%\color{beamerstructure}
+      $\bigstar$}%
+}
+\usesubsubitemizeitemtemplate{%
+    \scriptsize\raise.5pt\hbox{%\color{beamerstructure}
+      $\blacktriangleright$}%
+}
+
+%\setbeamersize{text margin left=2em,text margin right=2em}
+
+%\ifbeamer@secheader\else\setbeamertemplate{headline}[default]\fi
+
+\mode
+<all>

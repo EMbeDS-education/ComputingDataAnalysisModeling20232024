@@ -1,0 +1,16 @@
+case_id,activity,resource,timestamp
+1337,Take Order,Lucy,01/04/2020 13:37
+1337,Note Address of Customer,Lucy,01/04/2020 13:39
+1337,Register Payment Method,Lucy,01/04/2020 13:40
+1337,Prepare Burger,Luigi,01/04/2020 13:41
+1337,Grab Soda,Lucy,01/04/2020 13:42
+1337,Put Burger in Box,Luigi,01/04/2020 13:52
+1337,Wrap Order,Lucy,01/04/2020 13:53
+1337,Deliver Order,Mike,01/04/2020 13:55
+1538,Take Order,Randy,08/04/2020 12:37
+1538,Register Payment Method,Randy,08/04/2020 12:39
+1538,Note Address of Customer,Randy,08/04/2020 12:40
+1538,Prepare Burger,Luigi,08/04/2020 12:41
+1538,Put Burger in Box,Luigi,08/04/2020 12:52
+1538,Wrap Order,Randy,08/04/2020 12:53
+1538,Deliver Order,John,08/04/2020 12:55
