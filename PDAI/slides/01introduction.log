@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2022.3.2)  6 NOV 2023 08:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2022.3.2)  6 NOV 2023 08:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1196,151 +1196,170 @@ Package pdftex.def Info: figures/colab2.png  used on input line 429.
 (pdftex.def)             Requested size: 230.68497pt x 195.52124pt.
  [25
 
- <./figures/colab2.png>] (./01introduction.toc) [26
+ <./figures/colab2.png>] [26
 
 ]
-<figures/Breast-Biopsy-2.jpg, id=382, 352.31625pt x 233.37187pt>
+<figures/itDoesTheJob.jpg, id=391, 168.8709pt x 163.5711pt>
+File: figures/itDoesTheJob.jpg Graphic file (type jpg)
+<use figures/itDoesTheJob.jpg>
+Package pdftex.def Info: figures/itDoesTheJob.jpg  used on input line 441.
+(pdftex.def)             Requested size: 224.2757pt x 217.2498pt.
+ [27
+
+ <./figures/itDoesTheJob.jpg>]
+<figures/f737c96e-beginner-skier.jpg, id=398, 852.18375pt x 567.11874pt>
+File: figures/f737c96e-beginner-skier.jpg Graphic file (type jpg)
+<use figures/f737c96e-beginner-skier.jpg>
+Package pdftex.def Info: figures/f737c96e-beginner-skier.jpg  used on input lin
+e 454.
+(pdftex.def)             Requested size: 224.2757pt x 149.24733pt.
+ [28
+
+ <./figures/f737c96e-beginner-skier.jpg>] (./01introduction.toc)
+[29
+
+]
+<figures/Breast-Biopsy-2.jpg, id=415, 352.31625pt x 233.37187pt>
 File: figures/Breast-Biopsy-2.jpg Graphic file (type jpg)
 <use figures/Breast-Biopsy-2.jpg>
-Package pdftex.def Info: figures/Breast-Biopsy-2.jpg  used on input line 446.
+Package pdftex.def Info: figures/Breast-Biopsy-2.jpg  used on input line 471.
 (pdftex.def)             Requested size: 128.15614pt x 84.8898pt.
-<figures/fna-benign1.png, id=383, 302.63063pt x 198.7425pt>
+<figures/fna-benign1.png, id=416, 302.63063pt x 198.7425pt>
 File: figures/fna-benign1.png Graphic file (type png)
 <use figures/fna-benign1.png>
-Package pdftex.def Info: figures/fna-benign1.png  used on input line 446.
+Package pdftex.def Info: figures/fna-benign1.png  used on input line 471.
 (pdftex.def)             Requested size: 128.15614pt x 84.16269pt.
-<figures/fna-malignant1.png, id=384, 302.63063pt x 198.7425pt>
+<figures/fna-malignant1.png, id=417, 302.63063pt x 198.7425pt>
 File: figures/fna-malignant1.png Graphic file (type png)
 <use figures/fna-malignant1.png>
-Package pdftex.def Info: figures/fna-malignant1.png  used on input line 446.
+Package pdftex.def Info: figures/fna-malignant1.png  used on input line 471.
 (pdftex.def)             Requested size: 128.15614pt x 84.16269pt.
-
-[27
+ [30
 
  <./figures/Breast-Biopsy-2.jpg> <./figures/fna-benign1.png> <./figures/fna-mal
-ignant1.png>] [28
+ignant1.png>] [31
 
 ]
-<figures/lucy.png, id=397, 434.62375pt x 317.185pt>
+<figures/lucy.png, id=431, 434.62375pt x 317.185pt>
 File: figures/lucy.png Graphic file (type png)
 <use figures/lucy.png>
-Package pdftex.def Info: figures/lucy.png  used on input line 473.
+Package pdftex.def Info: figures/lucy.png  used on input line 498.
 (pdftex.def)             Requested size: 128.15614pt x 93.53003pt.
-<figures/randy.png, id=398, 448.67625pt x 278.03876pt>
+<figures/randy.png, id=432, 448.67625pt x 278.03876pt>
 File: figures/randy.png Graphic file (type png)
 <use figures/randy.png>
-Package pdftex.def Info: figures/randy.png  used on input line 473.
+Package pdftex.def Info: figures/randy.png  used on input line 498.
 (pdftex.def)             Requested size: 128.15614pt x 79.4158pt.
-<figures/simple_sample_model.png, id=400, 1444.64719pt x 163.3603pt>
+<figures/simple_sample_model.png, id=434, 1444.64719pt x 163.3603pt>
 File: figures/simple_sample_model.png Graphic file (type png)
 <use figures/simple_sample_model.png>
-Package pdftex.def Info: figures/simple_sample_model.png  used on input line 47
-3.
+Package pdftex.def Info: figures/simple_sample_model.png  used on input line 49
+8.
 (pdftex.def)             Requested size: 288.35376pt x 32.60666pt.
- [29
-
- <./figures/lucy.png> <./figures/randy.png> <./figures/simple_sample_model.png>
-] [30
-
-] (./01introduction.toc) [31
-
-]
-<figures/kahoot.jpg, id=437, 1284.8pt x 722.7pt>
-File: figures/kahoot.jpg Graphic file (type jpg)
-<use figures/kahoot.jpg>
-Package pdftex.def Info: figures/kahoot.jpg  used on input line 501.
-(pdftex.def)             Requested size: 256.31717pt x 144.17352pt.
  [32
 
- <./figures/kahoot.jpg>] (./01introduction.toc) [33
+ <./figures/lucy.png> <./figures/randy.png> <./figures/simple_sample_model.png>
+] [33
 
-] [34
+] (./01introduction.toc) [34
 
 ]
-<figures/7mostDemanded2019.png, id=460, 636.3775pt x 662.475pt>
+<figures/kahoot.jpg, id=470, 1284.8pt x 722.7pt>
+File: figures/kahoot.jpg Graphic file (type jpg)
+<use figures/kahoot.jpg>
+Package pdftex.def Info: figures/kahoot.jpg  used on input line 526.
+(pdftex.def)             Requested size: 256.31717pt x 144.17352pt.
+ [35
+
+ <./figures/kahoot.jpg>] (./01introduction.toc) [36
+
+] [37
+
+]
+<figures/7mostDemanded2019.png, id=495, 636.3775pt x 662.475pt>
 File: figures/7mostDemanded2019.png Graphic file (type png)
 <use figures/7mostDemanded2019.png>
-Package pdftex.def Info: figures/7mostDemanded2019.png  used on input line 530.
+Package pdftex.def Info: figures/7mostDemanded2019.png  used on input line 555.
 
 (pdftex.def)             Requested size: 144.17688pt x 150.08151pt.
-<figures/20mostPopularFeb2019.png, id=461, 1204.5pt x 1346.02875pt>
+<figures/20mostPopularFeb2019.png, id=496, 1204.5pt x 1346.02875pt>
 File: figures/20mostPopularFeb2019.png Graphic file (type png)
 <use figures/20mostPopularFeb2019.png>
 Package pdftex.def Info: figures/20mostPopularFeb2019.png  used on input line 5
-30.
+55.
 (pdftex.def)             Requested size: 144.17688pt x 161.1057pt.
- [35
+ [38
 
  <./figures/7mostDemanded2019.png> <./figures/20mostPopularFeb2019.png>]
-<figures/tiobe02_2021.png, id=470, 933.4875pt x 278.03876pt>
+<figures/tiobe02_2021.png, id=505, 933.4875pt x 278.03876pt>
 File: figures/tiobe02_2021.png Graphic file (type png)
 <use figures/tiobe02_2021.png>
-Package pdftex.def Info: figures/tiobe02_2021.png  used on input line 540.
+Package pdftex.def Info: figures/tiobe02_2021.png  used on input line 565.
 (pdftex.def)             Requested size: 326.72552pt x 97.31502pt.
 
-Overfull \hbox (6.33028pt too wide) in paragraph at lines 540--540
+Overfull \hbox (6.33028pt too wide) in paragraph at lines 565--565
 [][]  
  []
 
-<figures/tiobe05_2021.png, id=471, 1119.18124pt x 263.98625pt>
+<figures/tiobe05_2021.png, id=506, 1119.18124pt x 263.98625pt>
 File: figures/tiobe05_2021.png Graphic file (type png)
 <use figures/tiobe05_2021.png>
-Package pdftex.def Info: figures/tiobe05_2021.png  used on input line 540.
+Package pdftex.def Info: figures/tiobe05_2021.png  used on input line 565.
 (pdftex.def)             Requested size: 313.3686pt x 73.91563pt.
-[36
+[39
 
  <./figures/tiobe02_2021.png> <./figures/tiobe05_2021.png>]
 File: figures/tiobe02_2021.png Graphic file (type png)
 <use figures/tiobe02_2021.png>
-Package pdftex.def Info: figures/tiobe02_2021.png  used on input line 540.
+Package pdftex.def Info: figures/tiobe02_2021.png  used on input line 565.
 (pdftex.def)             Requested size: 326.72552pt x 97.31502pt.
 
-Overfull \hbox (6.33028pt too wide) in paragraph at lines 540--540
+Overfull \hbox (6.33028pt too wide) in paragraph at lines 565--565
 [][]  
  []
 
 File: figures/tiobe05_2021.png Graphic file (type png)
 <use figures/tiobe05_2021.png>
-Package pdftex.def Info: figures/tiobe05_2021.png  used on input line 540.
+Package pdftex.def Info: figures/tiobe05_2021.png  used on input line 565.
 (pdftex.def)             Requested size: 313.3686pt x 73.91563pt.
-[37
+[40
 
 ]
-<figures/tiobe01_23.png, id=491, 1388.18625pt x 657.45625pt>
+<figures/tiobe01_23.png, id=524, 1388.18625pt x 657.45625pt>
 File: figures/tiobe01_23.png Graphic file (type png)
 <use figures/tiobe01_23.png>
-Package pdftex.def Info: figures/tiobe01_23.png  used on input line 546.
+Package pdftex.def Info: figures/tiobe01_23.png  used on input line 571.
 (pdftex.def)             Requested size: 333.17151pt x 157.79272pt.
 
-Overfull \hbox (12.77626pt too wide) in paragraph at lines 546--546
+Overfull \hbox (12.77626pt too wide) in paragraph at lines 571--571
  [] 
  []
 
-[38
+[41
 
  <./figures/tiobe01_23.png>]
-<figures/python-logo.png, id=499, 1027.84pt x 1027.84pt>
+<figures/python-logo.png, id=532, 1027.84pt x 1027.84pt>
 File: figures/python-logo.png Graphic file (type png)
 <use figures/python-logo.png>
-Package pdftex.def Info: figures/python-logo.png  used on input line 572.
+Package pdftex.def Info: figures/python-logo.png  used on input line 597.
 (pdftex.def)             Requested size: 32.04147pt x 32.0415pt.
- [39
+ [42
 
- <./figures/python-logo.png>] [40
+ <./figures/python-logo.png>] [43
 
 ]
 \openout4 = `01introduction.vrb'.
 
 
 (./01introduction.vrb
-<figures/keywords.png, id=513, 667.49374pt x 329.23pt>
+<figures/keywords.png, id=547, 667.49374pt x 329.23pt>
 File: figures/keywords.png Graphic file (type png)
 <use figures/keywords.png>
 Package pdftex.def Info: figures/keywords.png  used on input line 11.
 (pdftex.def)             Requested size: 160.19762pt x 79.01178pt.
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <9> not available
 (Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 28.
-) [41
+) [44
 
  <./figures/keywords.png>]
 \openout2 = `live.aux'.
@@ -1351,32 +1370,14 @@ File: figures/HelloWorldjupyterlab.png Graphic file (type png)
 Package pdftex.def Info: figures/HelloWorldjupyterlab.png  used on input line 8
 .
 (pdftex.def)             Requested size: 320.39525pt x 95.69101pt.
- [42
+ [45
 
 
-]) [43
+]) [46
 
 
 
 ]
-<figures/itDoesTheJob.jpg, id=537, 168.8709pt x 163.5711pt>
-File: figures/itDoesTheJob.jpg Graphic file (type jpg)
-<use figures/itDoesTheJob.jpg>
-Package pdftex.def Info: figures/itDoesTheJob.jpg  used on input line 635.
-(pdftex.def)             Requested size: 224.2757pt x 217.2498pt.
-
-[44
-
- <./figures/itDoesTheJob.jpg>]
-<figures/f737c96e-beginner-skier.jpg, id=544, 852.18375pt x 567.11874pt>
-File: figures/f737c96e-beginner-skier.jpg Graphic file (type jpg)
-<use figures/f737c96e-beginner-skier.jpg>
-Package pdftex.def Info: figures/f737c96e-beginner-skier.jpg  used on input lin
-e 648.
-(pdftex.def)             Requested size: 224.2757pt x 149.24733pt.
- [45
-
- <./figures/f737c96e-beginner-skier.jpg>]
 \tf@nav=\write6
 \openout6 = `01introduction.nav'.
 
@@ -1392,10 +1393,10 @@ Package rerunfilecheck Info: File `01introduction.out' has not changed.
 (rerunfilecheck)             Checksum: F69A04C5B7237B536C20EEA8A614F79E;596.
  ) 
 Here is how much of TeX's memory you used:
- 23762 strings out of 478994
- 430100 string characters out of 5858185
+ 23772 strings out of 478994
+ 430400 string characters out of 5858185
  893323 words of memory out of 5000000
- 40586 multiletter control sequences out of 15000+600000
+ 40594 multiletter control sequences out of 15000+600000
  418822 words of font info for 82 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  131i,15n,132p,428b,1503s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1408,10 +1409,10 @@ usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></u
 sr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></us
 r/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/
 local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on 01introduction.pdf (45 pages, 3260596 bytes).
+Output written on 01introduction.pdf (46 pages, 3263110 bytes).
 PDF statistics:
- 607 PDF objects out of 1000 (max. 8388607)
- 423 compressed objects within 5 object streams
- 95 named destinations out of 1000 (max. 500000)
- 678 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 626 PDF objects out of 1000 (max. 8388607)
+ 435 compressed objects within 5 object streams
+ 97 named destinations out of 1000 (max. 500000)
+ 714 words of extra memory for PDF output out of 10000 (max. 10000000)
 

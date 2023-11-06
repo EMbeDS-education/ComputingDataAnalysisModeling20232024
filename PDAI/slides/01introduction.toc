@@ -1,4 +1,4 @@
 \beamer@sectionintoc {1}{Course introduction}{3}{0}{1}
-\beamer@sectionintoc {2}{Sneak preview of Module 2}{26}{0}{2}
-\beamer@sectionintoc {3}{Let's Kahoot!}{31}{0}{3}
-\beamer@sectionintoc {4}{Overview to programming}{33}{0}{4}
+\beamer@sectionintoc {2}{Sneak preview of Module 2}{29}{0}{2}
+\beamer@sectionintoc {3}{Let's Kahoot!}{34}{0}{3}
+\beamer@sectionintoc {4}{Overview to programming}{36}{0}{4}
