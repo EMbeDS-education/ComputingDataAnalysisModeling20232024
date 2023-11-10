@@ -1,0 +1,235 @@
+---
+title: "Linear Regression - Example"
+author: "SSSA - Applied Statistics - Chiara Seghieri and Costanza Tortù"
+date: "2023-12-07"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Preliminaries
+
+### Recall packages
+
+```{r setup, include=FALSE}
+
+options(warn=-1)
+rm(list=ls())
+
+library(VIM) # Useful to analyze missing data 
+library(mice) # Useful to analyze missing data 
+library(foreign) # Package that allows you to read .dta data
+library(psych)
+library(MatchIt)
+library(bestNormalize)
+library(corrplot)
+library(GGally)
+
+```
+
+### Import Data
+
+The data consists of a number of demographic variables (age, race, academic background, and previous real earnings), as well as a treatment indicator, and the real earnings in the year 1978 (the response).
+
+Robert Lalonde, "Evaluating the Econometric Evaluations of Training Programs", American Economic Review, Vol. 76, pp. 604-620
+
+```{r}
+rm(list=ls())
+data("lalonde")
+
+
+```
+
+
+## Have a first look at data
+
+
+```{r}
+dim(lalonde)# units x variables
+head(lalonde)
+
+
+```
+
+
+### Inspect variables
+
+
+```{r}
+
+colnames(lalonde)
+
+quantitative_variables <- c("age", "educ", "re74", "re75", "re78")
+qualitative_variables <- c("treat", "race", "married", "nodegree")
+dummies <- c("treat", "married", "nodegree" )
+
+lalonde$treat_factor <- as.factor(lalonde$treat)
+lalonde$married_factor <- as.factor(lalonde$treat)
+lalonde$nodegree_factor <- as.factor(lalonde$nodegree)
+
+all_variables <- c(quantitative_variables, qualitative_variables_factors)
+
+
+
+
+
+```
+
+Let's focus on quantitative variables
+
+```{r}
+
+pairs.panels(lalonde[, quantitative_variables], 
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = TRUE,  # show density plots
+             ellipses = TRUE # show correlation ellipses
+             )
+
+correlation_matrix <- cor(lalonde[, quantitative_variables])
+
+corrplot(correlation_matrix, type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45)
+
+```
+You may also treat dummies as quantitative variables and compute correlation, but pay attention to the interpretation!!!!!!
+
+
+```{r}
+
+correlation_matrix_withdummies <- cor(lalonde[, c(quantitative_variables,dummies)])
+
+corrplot(correlation_matrix_withdummies, type = "upper", 
+         order = "hclust", 
+         tl.col = "black", tl.srt = 45)
+
+```
+
+```{r}
+
+ggpairs(lalonde[, all_variables],
+        progress = F,
+        lower=list(combo=wrap("facethist",  
+        binwidth=0.5)))
+
+```
+
+
+
+
+
+# Run a regression model
+
+The response variable measures earnings in 1978 while the marital status the age, the education, the race and the training program are independent variables.
+
+## Make sure your data meet the normality assumption 
+
+Let's have a look at the distribution of earnings in 1978
+
+```{r}
+
+hist(lalonde$re78, 
+     main ="Histogram of real earnings in 1978",
+     col = "red",
+     xlab = "Earnings in 1978")
+
+
+
+```
+This is far from normality, let's apply a normalization trasformation
+
+```{r}
+
+re78_BN <- bestNormalize(lalonde$re78)
+re78_BN
+
+lalonde$re78_normalized <- re78_BN$x.t
+
+hist(lalonde$re78_normalized,
+     main ="Histogram of normalized real earnings in 1978",
+     col = "orange",
+     xlab = "Normalized Earnings in 1978")
+
+
+```
+
+
+
+## Simple Linear Regression
+
+We investigate the relationship between the education and the real earnings in the year 1978
+
+educ: years of education
+re78: earnings in 1978
+
+
+```{r}
+
+
+simple_model <- lm(re78_normalized ~ educ, 
+                   data = lalonde)
+
+summary(simple_model)
+
+plot(lalonde$age, lalonde$re78, pch=16)
+abline(simple_model, col="red" )
+
+
+
+
+```
+
+Further inspect your model
+
+```{r}
+
+plot(simple_model)
+
+```
+
+
+
+## Multiple Regression
+
+We investigate the determinants of real earnings in the year 1978
+
+age:  gae (years), numeric
+treat: attendence of a training program
+educ: years of education
+married: marital status
+re78: earnings in 1978
+
+```{r}
+
+
+multiple_model_normalized <-lm(re78_normalized ~ age + educ + as.factor(race) 
+                             + married + treat + nodegree, 
+                               data = lalonde)
+
+summary(multiple_model_normalized)
+
+
+```
+Furtehr inspect your model
+
+```{r}
+plot(multiple_model_normalized)
+
+```
+
+
+
+Add valuable interactions
+
+```{r}
+
+
+multiple_model_normalized_winteractions <-lm(re78_normalized ~ age + educ + as.factor(race) +
+                                             married + treat + nodegree +
+                                             as.factor(race)*educ + treat*married, 
+                                             data = lalonde)
+
+summary(multiple_model_normalized_winteractions)
+
+```
+
