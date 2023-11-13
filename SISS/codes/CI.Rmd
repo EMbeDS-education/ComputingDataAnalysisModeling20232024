@@ -1,0 +1,203 @@
+---
+title: "Confidence intervals"
+author: "SISS - Applied Statistics - Chiara Seghieri and Costanza Tortù"
+date: "2023-11-13"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Preliminaries
+
+### Recall packages
+
+```{r setup, include=FALSE}
+
+options(warn=-1)
+rm(list=ls())
+
+library(VIM) # Useful to analyze missing data 
+library(mice) # Useful to analyze missing data 
+library(foreign) # Package that allows you to read .dta data
+library(psych)
+library(MatchIt)
+library(bestNormalize)
+library(corrplot)
+library(GGally)
+
+```
+
+### Import Data
+
+The iris dataset is a built-in dataset in R that contains measurements on 4 different attributes (in centimeters) for 150 flowers from 3 different species. Iris, introduced by Ronald Fisher in his 1936 paper The use of multiple measurements in taxonomic problems, contains three plant species (setosa, virginica, versicolor) and four features measured for each sample. These quantify the morphologic variation of the iris flower in its three species, all measurements given in centimeters.
+
+```{r}
+rm(list=ls())
+data("iris")
+
+
+```
+
+
+## Have a first look at data
+
+
+```{r}
+dim(iris)# units x variables
+head(iris)
+
+
+```
+
+### Inspect variables
+
+
+```{r}
+
+colnames(iris)
+
+quantitative_variables <- c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width")
+qualitative_variables <- c("Species")
+
+
+
+
+
+
+```
+
+
+### Look at the distribution of earnings in 1978
+
+```{r}
+
+hist(iris$Sepal.Length, 
+     main ="Histogram of Sepal Length",
+     col = "red",
+     xlab = "Sepal Length")
+
+summary(iris$Sepal.Length)
+
+boxplot(iris$Sepal.Length,
+        col="purple")
+```
+
+Let's have a look at the correlation among continuous variables 
+
+```{r}
+
+correlation_matrix <- cor(iris[, c(quantitative_variables)])
+
+corrplot(correlation_matrix, type = "upper", 
+         order = "hclust", 
+         tl.col = "black", tl.srt = 45)
+
+
+```
+
+Let's explore the relationships among variables, with respect to the flower species
+
+```{r}
+
+ggpairs(iris, aes(color = Species, alpha = 0.5),
+        progress = FALSE,
+        upper = list(combo = "facetdensity"),
+        lower = list(combo=wrap("facethist",  
+        binwidth=0.5)))
+
+```
+
+
+## Compute confidence intervals for the average Sepal length
+
+
+### Compute sample mean
+
+```{r}
+
+  sample.mean <- mean(iris$Sepal.Length)
+  print(sample.mean)
+
+```
+
+
+
+### Compute sample variance
+
+```{r}
+
+sample.n <- length(iris$Sepal.Length)
+sample.sd <- sd(iris$Sepal.Length)
+sample.se <- sample.sd/sqrt(sample.n)
+print(sample.se)
+
+```
+
+
+### Find the t-score
+
+
+```{r}
+alpha = 0.05
+degrees.freedom = sample.n - 1
+t.score = qt(p=alpha/2, df=degrees.freedom,lower.tail=F)
+print(t.score)
+```
+
+### Compute margin of error
+
+```{r}
+margin.error <- t.score * sample.se
+print(margin.error)
+
+```
+
+
+### Now we are ready to compute the confidence interval 
+
+```{r}
+lower.bound <- sample.mean - margin.error
+upper.bound <- sample.mean + margin.error
+print(c(lower.bound,upper.bound))
+
+```
+
+
+
+## Compute confidence intervals for the variance of Sepal Length 
+
+
+
+
+### Compute sample variance
+
+```{r}
+
+sample.n <- length(iris$Sepal.Length)
+sample.var <- var(iris$Sepal.Length)
+print(sample.var)
+
+```
+
+
+### Find the chi-scores
+
+
+```{r}
+alpha = 0.05
+degrees.freedom = sample.n - 1
+chi.scores = qchisq(c(1-alpha/2, alpha/2), df =  degrees.freedom)
+print(chi.scores)
+
+
+```
+### Now we are ready to compute the confidence interval 
+
+```{r}
+lower.bound <- degrees.freedom*sample.var/chi.scores[1]
+upper.bound <- degrees.freedom*sample.var/chi.scores[2]
+
+print(c(lower.bound,upper.bound))
+
+```
+
