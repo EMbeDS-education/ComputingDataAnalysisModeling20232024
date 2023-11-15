@@ -24,16 +24,19 @@ library(MatchIt)
 library(bestNormalize)
 library(corrplot)
 library(GGally)
+library(haven)
+library(dataset)
 
 ```
 
 ### Import Data
 
-The iris dataset is a built-in dataset in R that contains measurements on 4 different attributes (in centimeters) for 150 flowers from 3 different species. Iris, introduced by Ronald Fisher in his 1936 paper The use of multiple measurements in taxonomic problems, contains three plant species (setosa, virginica, versicolor) and four features measured for each sample. These quantify the morphologic variation of the iris flower in its three species, all measurements given in centimeters.
+
 
 ```{r}
+
 rm(list=ls())
-data("iris")
+value <- read_dta("~/Documents/Sant'Anna/Corso allievi/Data/Value Survey descrittive CI e test/WV6_Data_stata_vold.dta")
 
 
 ```
@@ -41,25 +44,43 @@ data("iris")
 
 ## Have a first look at data
 
-
 ```{r}
-dim(iris)# units x variables
-head(iris)
+
+dim(value)
+colnames(value)
+head(value)
 
 
 ```
+
+### Simplify data 
+
+Here we apply some simplifications on data 
+- i) Here we keep only observations with no missings (this is not the right procedure to deal with missings of course :-))
+- ii) We focus on a subsample of countries (#360 Romania 255 Germany 380 Sweden 230 Spain)
+
+```{r}
+value <- value[complete.cases(value),]
+
+included_countries <- c(360,255,380,230)
+value <- value[which(value$cow %in% included_countries),]
+value$cow <- as.factor(value$cow)
+levels(value$cow) <- c("Spain", "Germany", "Romania", "Sweeden")
+
+
+```
+
 
 ### Inspect variables
 
 
 ```{r}
 
-colnames(iris)
 
-quantitative_variables <- c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width")
-qualitative_variables <- c("Species")
-
-
+quantitative_variables <- c("lifesat", "age", "relativism", "scepticism", "equality", "choice","voice")
+dummies <- c( "male", "trust")
+factors <- c("cow", "education")
+qualitative_variables <- c(dummies, factors)
 
 
 
@@ -67,18 +88,18 @@ qualitative_variables <- c("Species")
 ```
 
 
-### Look at the distribution of earnings in 1978
+### Look at the distribution of the equality index
 
 ```{r}
 
-hist(iris$Sepal.Length, 
-     main ="Histogram of Sepal Length",
+hist(value$equality, 
+     main ="Histogram of Equality index",
      col = "red",
-     xlab = "Sepal Length")
+     xlab = "Equality index")
 
-summary(iris$Sepal.Length)
+summary(value$equality)
 
-boxplot(iris$Sepal.Length,
+boxplot(value$equality,
         col="purple")
 ```
 
@@ -86,7 +107,7 @@ Let's have a look at the correlation among continuous variables
 
 ```{r}
 
-correlation_matrix <- cor(iris[, c(quantitative_variables)])
+correlation_matrix <- cor(value[, c(quantitative_variables)])
 
 corrplot(correlation_matrix, type = "upper", 
          order = "hclust", 
@@ -95,27 +116,16 @@ corrplot(correlation_matrix, type = "upper",
 
 ```
 
-Let's explore the relationships among variables, with respect to the flower species
-
-```{r}
-
-ggpairs(iris, aes(color = Species, alpha = 0.5),
-        progress = FALSE,
-        upper = list(combo = "facetdensity"),
-        lower = list(combo=wrap("facethist",  
-        binwidth=0.5)))
-
-```
 
 
-## Compute confidence intervals for the average Sepal length
+## Compute confidence intervals for the average Equality index
 
 
 ### Compute sample mean
 
 ```{r}
 
-  sample.mean <- mean(iris$Sepal.Length)
+  sample.mean <- mean(value$equality)
   print(sample.mean)
 
 ```
@@ -126,8 +136,8 @@ ggpairs(iris, aes(color = Species, alpha = 0.5),
 
 ```{r}
 
-sample.n <- length(iris$Sepal.Length)
-sample.sd <- sd(iris$Sepal.Length)
+sample.n <- length(value$equality)
+sample.sd <- sd(value$equality)
 sample.se <- sample.sd/sqrt(sample.n)
 print(sample.se)
 
@@ -163,8 +173,65 @@ print(c(lower.bound,upper.bound))
 ```
 
 
+## Compute confidence intervals for the average Equality index in a subsample
 
-## Compute confidence intervals for the variance of Sepal Length 
+
+### Compute sample mean
+
+```{r}
+  
+  N_subsample <- 250
+  sampled_units <- sample(value$ID, N_subsample, replace = F)
+  value_subsample <- value[which(value$ID %in% sampled_units),]
+  sample.mean <- mean(value_subsample$equality)
+  print(sample.mean)
+
+```
+
+
+
+### Compute sample variance
+
+```{r}
+
+sample.n <- length(value_subsample$equality)
+sample.sd <- sd(value_subsample$equality)
+sample.se <- sample.sd/sqrt(sample.n)
+print(sample.se)
+
+```
+
+
+### Find the t-score
+
+
+```{r}
+alpha = 0.05
+degrees.freedom = sample.n - 1
+t.score = qt(p=alpha/2, df=degrees.freedom,lower.tail=F)
+print(t.score)
+```
+
+### Compute margin of error
+
+```{r}
+margin.error <- t.score * sample.se
+print(margin.error)
+
+```
+
+
+### Now we are ready to compute the confidence interval 
+
+```{r}
+lower.bound <- sample.mean - margin.error
+upper.bound <- sample.mean + margin.error
+print(c(lower.bound,upper.bound))
+
+```
+
+
+## Compute confidence intervals for the variance of Equality index 
 
 
 
@@ -173,8 +240,8 @@ print(c(lower.bound,upper.bound))
 
 ```{r}
 
-sample.n <- length(iris$Sepal.Length)
-sample.var <- var(iris$Sepal.Length)
+sample.n <- length(value$equality)
+sample.var <- var(value$equality)
 print(sample.var)
 
 ```
@@ -200,4 +267,76 @@ upper.bound <- degrees.freedom*sample.var/chi.scores[2]
 print(c(lower.bound,upper.bound))
 
 ```
+## Confidence intervals for the difference in means
+
+Let's focus on two countries: Germany and Romania. We want to build up a confidence interval for the difference im the mean equality index in the two countries.
+
+1) Compute all the quantities you need 
+
+```{r}
+n1 <- length(which(value$cow == "Germany"))
+xbar1 <- mean(value$equality[which(value$cow == "Germany")])
+s1 <- var(value$equality[which(value$cow == "Germany")])
+n2 <- length(which(value$cow == "Romania"))
+xbar2 <- mean(value$equality[which(value$cow == "Romania")])
+s2 <-  var(value$equality[which(value$cow == "Romania")])
+```
+
+2) Compute pooled variance
+
+```{r}
+sp = ((n1-1)*s1^2+(n2-1)*s2^2)/(n1+n2-2)
+sp
+```
+3) Compute the margin of error
+
+```{r}
+margin <- qt(1-alpha/2,df=n1+n2-1)*sqrt(sp/n1 + sp/n2)
+margin
+```
+
+4) Compute the confidence interval
+
+```{r}
+lowerinterval <- (xbar1-xbar2) - margin
+lowerinterval
+
+upperinterval <- (xbar1-xbar2) + margin
+upperinterval
+```
+
+## Confidence intervals for the difference in proportions
+
+Let's focus on two countries: Germany and Romania. We want to build up a confidence interval for the difference im the proportion of people who trust in people in the two countries.
+
+1) Compute all the quantities you need 
+
+```{r}
+n1 <- length(which(value$cow == "Germany"))
+p1 <- mean(value$trust[which(value$cow == "Germany")])
+
+n2 <- length(which(value$cow == "Romania"))
+p2 <- mean(value$trust[which(value$cow == "Romania")])
+
+```
+
+2) Compute the margin of error
+
+```{r}
+margin <- qnorm(1-alpha/2)*sqrt(p1*(1-p1)/n1 + p2*(1-p2)/n2)
+margin
+```
+
+3) Compute the confidence interval
+
+```{r}
+lowerinterval <- (p1-p2) - margin
+lowerinterval
+
+upperinterval <- (p1-p2) + margin
+upperinterval
+```
+
+
+
 
