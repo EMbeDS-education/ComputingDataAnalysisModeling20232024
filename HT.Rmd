@@ -1,0 +1,575 @@
+---
+title: "Hypothesis Testing"
+author: "SISS - Applied Statistics - Chiara Seghieri and Costanza Tortù"
+date: "2023-11-16"
+output: pdf_document
+---
+
+
+## Preliminaries
+
+### Recall packages
+
+```{r setup, include=FALSE}
+
+options(warn=-1)
+rm(list=ls())
+
+library(VIM) # Useful to analyze missing data 
+library(mice) # Useful to analyze missing data 
+library(foreign) # Package that allows you to read .dta data
+library(psych)
+library(MatchIt)
+library(bestNormalize)
+library(EnvStats)
+library(corrplot)
+library(GGally)
+library(haven)
+library(dataset)
+library(BSDA)
+
+```
+
+### Import Data
+
+
+
+```{r}
+
+rm(list=ls())
+value <- read_dta("~/Documents/Sant'Anna/Corso allievi/Data/Value Survey descrittive CI e test/WV6_Data_stata_vold.dta")
+
+
+```
+
+
+## Have a first look at data
+
+```{r}
+
+dim(value)
+colnames(value)
+head(value)
+
+
+```
+
+### Simplify data 
+
+Here we apply some simplifications on data 
+- i) Here we keep only observations with no missings (this is not the right procedure to deal with missings of course :-))
+- ii) We focus on a subsample of countries (#360 Romania 255 Germany 380 Sweden 230 Spain)
+
+```{r}
+value <- value[complete.cases(value),]
+
+included_countries <- c(360,255,380,230)
+value <- value[which(value$cow %in% included_countries),]
+value$cow <- as.factor(value$cow)
+levels(value$cow) <- c("Spain", "Germany", "Romania", "Sweeden")
+
+
+```
+
+
+### Inspect variables
+
+
+```{r}
+
+
+quantitative_variables <- c("lifesat", "age", "relativism", "scepticism", "equality", "choice","voice")
+dummies <- c( "male", "trust")
+factors <- c("cow", "education")
+qualitative_variables <- c(dummies, factors)
+
+
+
+
+```
+
+
+### Look at the distribution of the Choice vari<ble
+
+```{r}
+
+hist(value$choice, 
+     main ="Histogram of Choice Index",
+     col = "red",
+     xlab = "Choice index")
+
+summary(value$choice)
+
+boxplot(value$choice,
+        col="purple")
+```
+
+## Hypothesis testing for one sample
+
+### Compute sample mean
+
+```{r}
+
+  sample.mean <- mean(value$choice)
+  print(sample.mean)
+
+```
+
+### Compute sample variance
+
+```{r}
+
+  sample.var <- var(value$choice)
+  print(sample.var)
+
+```
+
+
+
+Test the hypothesis that the mean of choice is equal to 0.7 (two sided test)
+
+1) Traditional approach
+
+```{r}
+
+alpha = 0.05
+
+tscore <- (sample.mean - 0.7 ) / (sqrt(sample.var / nrow(value)))
+tscore
+
+t1 <- qt( p = alpha/2, df = nrow(value) - 1)
+accept_region <- c( - t1, t1)
+
+
+```
+
+
+The compyted t score is outside the critical region. So, we REJECT HO
+
+2) P-Value Approach 
+
+
+```{r}
+
+alpha = 0.05
+
+tscore <- (sample.mean - 0.7 ) / (sqrt(sample.var / nrow(value)))
+tscore
+
+pvalue <- pt( q = tscore, df = nrow(value) - 1)
+pvalue
+
+
+```
+Pvalue is much smaller than alpha. Reject Ho
+
+
+You can simply use the t.test function 
+
+```{r}
+
+alpha = 0.05
+
+t.test(value$choice,
+       mu = 0.7,
+       alternative = "two.sided",
+       conf.level = 1 - alpha)
+
+```
+
+Test the hypothesis that the mean of choice is smaller than 0.7 (one sided test)
+
+```{r}
+
+alpha = 0.05
+
+t.test(value$choice,
+       mu = 0.7,
+       alternative = "less",
+       conf.level = 1 - alpha)
+
+```
+
+
+
+Test the hypothesis that the mean of choice is greater than 0.7 (one sided test)
+
+```{r}
+
+alpha = 0.05
+
+t.test(value$choice,
+       mu = 0.7,
+       alternative = "greater",
+       conf.level = 1 - alpha)
+
+```
+
+
+
+
+Test the hypothesis that the mean of choice is eqyal to 0.7 (two sided test), alpha = 0.1
+
+```{r}
+
+alpha = 0.1
+
+t.test(value$choice,
+       mu = 0.7,
+       alternative = "two.sided",
+       conf.level = 1 - alpha)
+
+```
+
+
+Let's pretend we have information about the population variance of the choice index. Let's say we know this is equal to 0.10. We can test the hypothesis that the mean of the choice index is equal than 0.7 using the z score.
+
+```{r}
+
+alpha = 0.05
+
+z.test(value$choice,
+       mu = 0,
+       sigma.x = 0.1,
+       alternative = "two.sided",
+       conf.level = 1 - alpha)
+
+```
+
+## Hypothesis testing to compare two samples
+
+Let's focus on two countries: Germany and Romania. We want to test some hypothesis aboiut the difference im the mean choice index in the two countries.
+
+Compute all the quantities you need 
+
+```{r}
+n1 <- length(which(value$cow == "Germany"))
+xbar1 <- mean(value$choice[which(value$cow == "Germany")])
+s1 <- var(value$choice[which(value$cow == "Germany")])
+
+xbar1
+s1
+
+```
+
+
+```{r}
+n2 <- length(which(value$cow == "Romania"))
+xbar2 <- mean(value$choice[which(value$cow == "Romania")])
+s2 <-  var(value$choice[which(value$cow == "Romania")])
+
+xbar2
+s2
+```
+
+Define a subset of the initial dataset that includes only observations from Romania and Germanua
+
+```{r}
+
+value_gr <- value[which(value$cow %in% c("Romania", "Germany")),]
+  
+```
+
+
+Test the hypothesis that the mean of choice is eqyal in the two countries (two sided test)
+
+```{r}
+
+alpha = 0.05
+
+t.test(value_gr$choice[which(value_gr$cow == "Germany")], 
+       value_gr$choice[which(value_gr$cow == "Romania")],
+       mu = 0,
+       alternative = "two.sided",
+       conf.level = 1 - alpha)
+
+
+```
+
+
+Test the hypothesis that the difference in means of choice is greater than 0.2  (one sided test)
+
+```{r}
+
+alpha = 0.05
+
+t.test(value_gr$choice[which(value_gr$cow == "Germany")], 
+       value_gr$choice[which(value_gr$cow == "Romania")],
+       mu = 0.2,
+       alternative = "greater",
+       conf.level = 1 - alpha)
+
+```
+
+## ANOVA
+
+```{r}
+value %>% 
+  ggplot(aes(cow, choice)) +
+  geom_boxplot(fill = "lightyellow",
+               varwidth = T) +              # proporzionale alla variabilità
+  stat_summary(fun.data = mean_cl_boot,     # punto che indica le medie
+               geom = "point",
+               size = 2, col = "blue")+
+  theme(legend.position = "null") +
+  theme_minimal()  
+```
+```{r}
+
+aov.res <- aov(data = value, 
+               choice ~ cow)
+
+summary(aov.res)
+
+coef(aov.res)
+
+summary.aov(aov.res, 
+            split = list(cow = list("Germany" = 1, 
+            "Romania" = 2, "Sweeden" = 3)))
+
+```
+
+
+## Paired Data
+
+What happens with paired data (just a toy example)
+
+```{r}
+
+before <- c(122, 124, 120, 119, 119, 120, 122, 125, 124, 123, 122, 121)
+after <- c(123, 125, 120, 124, 118, 122, 123, 128, 124, 125, 124, 120)
+
+t.test(x = before,
+       y = after, 
+       paired = TRUE)
+
+```
+
+## Test for proportions (one sample)
+
+### Look at the distribution of the Trust vari<ble
+
+```{r}
+
+hist(value$trust, 
+     main ="Histogram of Trust Varianble",
+     col = "orange",
+     xlab = "Choice")
+
+summary(value$trust)
+
+```
+
+
+
+### Compute sample proportion
+
+```{r}
+
+  sample.prop <- mean(value$trust)
+  print(sample.prop)
+
+```
+
+### Compute sample variance
+
+```{r}
+
+  sample.var <-   sample.prop * (1 -  sample.prop)
+  print(sample.var)
+
+```
+
+### Count the number of successes
+
+```{r}
+
+  success <-  length(which(value$trust == 1))
+  n = nrow(value)
+  
+```
+
+
+Test the hypothesis that the proportion of trust is equal to 0.5
+
+```{r}
+
+alpha = 0.05
+
+prop.test(success, n,
+       p = 0.5,
+       alternative = "two.sided",
+       conf.level = 1 - alpha)
+
+```
+
+Test the hypothesis that the proportion of trust is smaller than 0.5 (one sided test)
+
+```{r}
+
+alpha = 0.05
+
+prop.test(success, n,
+       p = 0.5,
+       alternative = "less",
+       conf.level = 1 - alpha)
+
+```
+
+
+Test the hypothesis that the proportion of trust is smaller than 0.3 (one sided test)
+
+```{r}
+
+alpha = 0.05
+
+prop.test(success, n,
+       p = 0.3,
+       alternative = "less",
+       conf.level = 1 - alpha,
+         correct = FALSE)
+
+```
+
+
+
+
+Test the hypothesis that the proportion of trust is eqyal to 0.5 (two sided test), alpha = 0.1
+
+```{r}
+
+alpha = 0.1
+
+prop.test(success, n,
+       p = 0.5,
+       alternative = "two.sided",
+       conf.level = 1 - alpha,
+         correct = FALSE)
+
+```
+
+## Test for proportions (two samples)
+
+Let's focus on two countries: Germany and Romania. We want to test some hypothesis aboiut the difference in the proportion of people who trust in others in the two countries.
+
+Compute all the quantities you need 
+
+```{r}
+n1 <- length(which(value$cow == "Germany"))
+p1 <- mean(value$trust[which(value$cow == "Germany")])
+s1 <- p1 * (1-p1)
+success1 <- length(which(value$trust == 1 & value$cow == "Germany"))
+
+success1
+p1
+s1
+
+```
+
+
+```{r}
+n2 <- length(which(value$cow == "Romania"))
+p2 <- mean(value$trust[which(value$cow == "Romania")])
+s2 <-  p2 * (1-p2)
+success2 <- length(which(value$trust == 1 & value$cow == "Romania"))
+
+success2
+p2
+s2
+```
+
+
+Test the hypothesis that the proportion of trust is eqyal in the two countries (two sided test)
+
+```{r}
+
+alpha = 0.05
+
+prop.test(x = c(success1, success2), 
+          n = c(n1,n2),
+          conf.level = 1 - alpha,
+            correct = FALSE)
+
+
+```
+
+
+Test the hypothesis that the difference in proportion of trust is greater in Germany (one sided test)
+
+```{r}
+
+alpha = 0.05
+
+
+prop.test(x = c(success1, success2), 
+          n = c(n1,n2),
+          alternative = "greater", 
+          conf.level = 1 - alpha,
+          correct = FALSE)
+
+
+
+```
+
+## Test for variance (one sample)
+
+We now focus on variances and we analyze the variance of the equality index.
+We test whether it is equal to 0.1 by using a chi-square test
+
+
+```{r}
+
+ varTest(as.numeric(value$equality),
+         alternative = "two.sided",
+         conf.level = 0.95, 
+         sigma.squared = 0.1
+         )
+
+```
+
+Now we test whether it is greater than 0.1
+
+```{r}
+
+ varTest(as.numeric(value$equality),
+         alternative = "greater",
+         conf.level = 0.95, 
+         sigma.squared = 0.1
+         )
+
+```
+
+## Test for variance (two samples
+
+
+We want to compare the variance of the equality index in Germany and the variance of the equality test in Romania. We use an F test.
+
+First, we test whether the variance of the equality in Germany is equal than the one estimated in Romania. 
+
+
+```{r}
+
+ var.test(x = as.numeric(value$equality[which(value$cow == "Germany")]),
+          y = as.numeric(value$equality[which(value$cow == "Romania")]),
+          conf.level = 0.95, 
+          ratio = 1
+         )
+```
+
+Now, we test whether it is smaller
+
+
+```{r}
+
+ var.test(x = as.numeric(value$equality[which(value$cow == "Germany")]),
+          y = as.numeric(value$equality[which(value$cow == "Romania")]),
+          conf.level = 0.95, 
+          ratio = 1, 
+          alternative = "less"
+         )
+```
+
+
+
+
+
