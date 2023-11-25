@@ -149,3 +149,6 @@ PDAI/.DS_Store
 .DS_Store
 .DS_Store
 PDAI/.DS_Store
+PDAI/jupyter/jupyterNotebooks/__pycache__/test_import_py.cpython-39.pyc
+PDAI/jupyter/jupyterNotebooks/otherpath/.ipynb_checkpoints/test_import_py_nested-checkpoint.py
+PDAI/jupyter/jupyterNotebooks/.ipynb_checkpoints/test_import_py-checkpoint.py
