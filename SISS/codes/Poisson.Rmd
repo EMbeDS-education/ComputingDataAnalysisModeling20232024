@@ -1,0 +1,167 @@
+---
+title: "Models for count data"
+author: "SISS - Applied Statistics - Chiara Seghieri and Costanza Tortù"
+date: "2023-12-04"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Load data 
+
+```{r}
+rm(list=ls())
+
+library(VIM) # Useful to analyze missing data 
+library(mice) # Useful to analyze missing data 
+library(foreign) # Package that allows you to read .dta data
+library(psych)
+library(MatchIt)
+library(bestNormalize)
+library(corrplot)
+library(GGally)
+library(MASS)
+library(AER)
+library(pscl)
+
+```
+
+# Have a preliminary overview of data
+
+## look  at the columns 
+
+```{r}
+
+data("DoctorVisits")
+doc <- DoctorVisits
+
+```
+
+Data come from an Australian health survey, where visits is the number of doctor visits in past two weeks.
+
+## Overview
+
+```{r}
+summary(doc)
+head(doc)
+```
+
+## Preliminary inspection of the outcome variable
+
+```{r}
+
+counts <- table(doc$visits)
+barplot(counts)
+
+
+```
+
+## Correlation in the data 
+
+```{r}
+
+quantitative_variables <- c("visits","age","income",
+                            "illness","reduced","health")
+
+pairs.panels(doc[,quantitative_variables], 
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = TRUE,  # show density plots
+             ellipses = TRUE # show correlation ellipses
+             )
+
+correlation_matrix <- cor(doc[, quantitative_variables])
+
+corrplot(correlation_matrix, type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45)
+```
+
+# Fit your models
+
+## Simple case 
+
+### Naive linear model
+
+```{r}
+
+simple_naive_lm <- lm(visits ~ age,
+              data = doc)
+summary(simple_naive_lm)
+simple_naive_lm_predicted <- predict(simple_naive_lm,
+                                     type="response")
+
+```
+### Poisson model 
+
+```{r}
+
+simple_poisson <- glm(visits ~ age, family="poisson",
+              data = doc)
+summary(simple_poisson)
+simple_poisson_predicted <- predict.glm(simple_poisson, type="response")
+
+```
+
+
+## Multivariate model 
+
+### Poisson model 
+
+```{r}
+full_poisson <- glm(visits ~ age + income + illness +
+                   reduced + health + private + freepoor                  + freerepat + nchronic + lchronic ,                         family="poisson",
+                data = doc)
+
+summary(full_poisson)
+```
+Have a look at the statistics of your model 
+
+```{r}
+glance(full_poisson)
+
+```
+Run an overdispersion test 
+
+```{r}
+dispersiontest(full_poisson, trafo = 1)
+```
+
+```{r}
+dispersiontest(full_poisson, trafo = 2)
+```
+
+### Quasi-poisson
+
+```{r}
+full_quasipoisson <- glm(visits ~ age + income + illness +
+                   reduced + health + private + freepoor                  + freerepat + nchronic + lchronic ,                         family="quasipoisson",
+                data = doc)
+
+summary(full_quasipoisson)
+```
+### Negative-binomial
+
+```{r}
+full_nb <- glm.nb(visits ~ age + income + illness +
+                   reduced + health + private + freepoor                  + freerepat + nchronic + lchronic ,  
+                data = doc)
+
+summary(full_nb)
+```
+
+### Zero inflated poisson
+
+```{r}
+full_zeroinfl_poisson <-zeroinfl(visits ~ age + income +                                         illness +
+                         reduced + health + private + freepoor                                   + freerepat + nchronic + lchronic ,  
+                dist="poisson", data = doc)
+summary(full_zeroinfl_poisson )
+```
+
+```{r}
+logLik(full_poisson)
+logLik(full_zeroinfl_poisson)
+logLik(full_quasipoisson)
+logLik(full_nb)
+```
+
