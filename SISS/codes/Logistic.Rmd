@@ -1,0 +1,204 @@
+---
+title: "Models for binary outcomes"
+author: "SSSA - Applied Statistics - Chiara Seghieri and Costanza Tortù"
+date: "2023-10-22"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+# Load data 
+
+```{r}
+library(readxl)
+library(foreign)
+library(haven)
+titanic <- as.data.frame(read_excel("~/Documents/Sant'Anna/Corso allievi/Data/TITANIC/TITANIC.xlsx"))
+mytitanic<-titanic[,c("survived","pclass","age","Gender","cabin","sibsp","parch")]
+
+
+
+```
+
+# Have a preliminary overview of data
+
+## look  at the columns 
+
+```{r}
+ncol(titanic)
+head(mytitanic)
+
+```
+
+## Are there missing entries?
+
+
+```{r}
+summary(titanic)
+
+```
+
+
+## Inspect variables
+
+```{r}
+
+my_cols <- c( "red","springgreen")
+pairs(mytitanic[,c("survived","pclass","age","Gender","sibsp","parch")], 
+      pch = 19,  cex = 0.5,  col = my_cols[mytitanic$survived + 1],
+      lower.panel=NULL)
+
+```
+
+# Inspect the outcome of interest 
+
+```{r}
+table(mytitanic$survived)
+hist(mytitanic$survived, main = "Survived" )
+
+```
+# Fit your models
+
+First, we investigate the relationship between age and survival 
+
+```{r}
+boxplot(age ~ survived,data = mytitanic, 
+        col = "bisque",
+        xlab = " Survival",
+        ylab = "Age (in years)",
+        main = "Incidence of survival vs. Age")
+```
+
+```{r}
+cdplot(as.factor(survived)~age,mytitanic,
+       col=c("lightgoldenrod", "lightcyan"), 
+       ylab = "Survival", 
+       xlab ="Age", main = "Conditional density plot")
+```
+
+
+## Compare the approaches for binary data with a naive linear approach
+
+
+### Naive linear model 
+
+```{r}
+
+
+simple_naive_lm <- lm(survived ~ age,
+              data = mytitanic)
+summary(simple_naive_lm)
+
+simple_naive_lm_predicted <- predict(simple_naive_lm)
+
+```
+
+### Simple Logit Model 
+
+```{r}
+
+simple_logit_fit <- glm(survived ~ age, family="binomial"(link="logit"),
+                    data = mytitanic)
+summary(simple_logit_fit)
+simple_logit_fit_predicted <- predict(simple_logit_fit,type="response")
+
+
+```
+
+
+```{r}
+
+par(mfrow = c(1,2))
+
+plot(mytitanic$age[which(!is.na(mytitanic$age))], main = "Linear fit", 
+     simple_naive_lm_predicted, xlab = "Age", ylab = "Survived",
+     pch=16, col="black", ylim=c(0,1) )
+
+plot(mytitanic$age[which(!is.na(mytitanic$age))], main ="Logit fit",
+     simple_logit_fit_predicted, xlab = "Age", ylab = "Survived",
+     pch=16, col="red", ylim=c(0,1) )
+
+
+```
+Here you do not see relevant differences but in some cases LPM can predict probabilities that are out of the range [0,1]!!!
+
+### Add a quadratic term for age
+
+```{r}
+ 
+simple_logit_fit2 <- glm(survived ~ age + I(age^2), family="binomial"(link="logit"),
+                    data = mytitanic)
+summary(simple_logit_fit2)
+simple_logit_fit_predicted2 <- predict(simple_logit_fit2,type="response")
+
+```
+
+Compare the two models
+
+```{r}
+anova(simple_logit_fit,simple_logit_fit2,test='LR')
+```
+
+
+## Add covariates 
+
+
+
+## Add other meaningful covariates 
+
+```{r}
+
+logit_fit <- glm(survived ~ age + I(age^2) + as.factor(pclass) +
+                as.factor(Gender) +  sibsp + as.factor(parch), 
+                family = "binomial"(link="logit"), 
+                data = mytitanic)
+summary(logit_fit)
+
+
+```
+
+
+
+
+## Add interactions
+
+```{r}
+
+logit_fit_winteract <- glm(survived ~ age + I(age^2) + as.factor(pclass) +
+                as.factor(Gender) +  sibsp +  as.factor(parch)+ age*as.factor(Gender) +
+                + as.factor(pclass)*as.factor(Gender), 
+                family = "binomial", 
+                data = mytitanic)
+summary(logit_fit_winteract)
+
+
+```
+
+
+## The probit link
+
+```{r}
+
+probit_fit <- glm(survived ~ age + as.factor(pclass) +
+                as.factor(Gender) +  sibsp + as.factor(parch), 
+                family = binomial(link = "probit"),
+                data = mytitanic)
+summary(probit_fit)
+
+
+```
+```{r}
+
+deviance(probit_fit)
+
+deviance(logit_fit)
+
+d <- deviance(probit_fit) - deviance(logit_fit)
+d
+
+```
+
+
+
+
