@@ -199,3 +199,7 @@ PDAI/.DS_Store
 PDAI/jupyter/jupyterNotebooks/.ipynb_checkpoints/covid_more_than_10k-checkpoint.csv
 PDAI/jupyter/jupyterNotebooks/.ipynb_checkpoints/covid_more_than_25k-checkpoint.csv
 PDAI/jupyter/jupyterNotebooks/.ipynb_checkpoints/M2_01Titanic_EDA-checkpoint.ipynb
+.DS_Store
+PDAI/.DS_Store
+PDAI/jupyter/.DS_Store
+PDAI/jupyter/jupyterNotebooks/.ipynb_checkpoints/M2_04BreastCancer_Preprocessing-checkpoint.ipynb
